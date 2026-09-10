@@ -1,0 +1,8 @@
+# https://sjoerdgourley.com/robots.txt
+
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /assets/og-card.html
+
+Sitemap: https://sjoerdgourley.com/sitemap.xml

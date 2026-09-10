@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8" />
+<meta name="robots" content="noindex, nofollow" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --canvas:#222222; --surface-2:#323232; --hairline:#464646;
+    --ink:#ffffff; --ink-muted:#d0d0d0; --ink-subtle:#8a8a8a;
+    --accent-fill:#1c5d99; --accent-text:#639fab;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{width:1200px;height:630px;overflow:hidden}
+  body{
+    background:var(--canvas);
+    font-family:'Inter',system-ui,sans-serif;
+    color:var(--ink);
+    position:relative;
+  }
+  .glow{
+    position:absolute; width:900px; height:900px; border-radius:50%;
+    background:radial-gradient(circle, rgba(28,93,153,.30) 0%, rgba(28,93,153,0) 62%);
+    top:-360px; right:-260px; pointer-events:none;
+  }
+  .wrap{
+    position:absolute; inset:0; display:flex; align-items:center;
+    padding:0 72px; gap:48px;
+  }
+  .left{flex:1; min-width:0}
+  .eyebrow{
+    font-family:'JetBrains Mono',monospace; font-size:16px; letter-spacing:.16em;
+    text-transform:uppercase; color:var(--accent-text); margin-bottom:26px;
+  }
+  .name{
+    font-size:64px; font-weight:800; letter-spacing:-.025em; line-height:1;
+    margin-bottom:6px;
+  }
+  .builds{
+    font-size:112px; font-weight:900; letter-spacing:-.045em; line-height:.92;
+    color:var(--ink); margin-bottom:26px;
+  }
+  .builds em{font-style:normal; color:var(--accent-text)}
+  .rule{width:88px; height:3px; background:var(--accent-fill); border-radius:2px; margin-bottom:24px}
+  .line{
+    font-size:25px; line-height:1.38; color:var(--ink-muted); font-weight:500;
+    max-width:620px;
+  }
+  .line b{color:var(--ink); font-weight:700}
+  .domain{
+    position:absolute; left:72px; bottom:46px;
+    font-family:'JetBrains Mono',monospace; font-size:19px; color:var(--ink-subtle);
+    letter-spacing:.02em;
+  }
+  .right{
+    width:352px; flex:none; position:relative; height:100%;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .card{
+    position:absolute; border-radius:18px; overflow:hidden;
+    border:1px solid var(--hairline);
+    box-shadow:0 30px 70px rgba(0,0,0,.55);
+    background:var(--surface-2);
+  }
+  .card img{display:block; width:100%; height:100%; object-fit:cover}
+  .c-back{width:212px; height:283px; transform:rotate(-8deg) translate(-92px,-34px)}
+  .c-mid {width:212px; height:283px; transform:rotate(7deg) translate(96px,26px)}
+  .c-main{width:268px; height:357px; transform:rotate(-2deg); z-index:3}
+</style></head>
+<body>
+  <div class="glow"></div>
+  <div class="wrap">
+    <div class="left">
+      <div class="eyebrow">The part underneath</div>
+      <div class="name">Sjoerd Gourley.</div>
+      <div class="builds">builds</div>
+      <div class="rule"></div>
+      <div class="line">Everyone clones the Netflix interface.<br /><b>Nobody builds the billing behind it.</b></div>
+    </div>
+    <div class="right">
+      <div class="card c-back"><img src="./hero/revenue.jpg" alt="" /></div>
+      <div class="card c-mid"><img src="./hero/calendar.jpg" alt="" /></div>
+      <div class="card c-main"><img src="./sjoerd-gourley.jpg" alt="" /></div>
+    </div>
+  </div>
+  <div class="domain">sjoerdgourley.com</div>
+</body></html>
