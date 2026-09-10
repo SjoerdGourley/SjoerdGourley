@@ -113,11 +113,22 @@ full Open Graph + Twitter `summary_large_image` set, `robots.txt` (disallows
 `ProfilePage` / `WebSite` / `Person` / `ImageObject`. The `Person` carries
 `sameAs` to the four channels — all four were HTTP-checked 200 before shipping.
 
-`assets/og-image.jpg` (1200x630, 88 KB) is **generated**, not hand-made:
-`assets/og-card.html` is the source, rendered headless at 1200x630 with
-`device_scale_factor: 2` and downsampled. It is `noindex` and robots-disallowed
-so it never competes with the real page. Change the card, re-render, re-encode —
-do not edit the JPEG.
+`assets/og-image.jpg` (1200x630, 86 KB) is **generated**, not hand-made:
+`assets/og-card.html` is the source. It is `noindex` and robots-disallowed so it
+never competes with the real page. Change the card and re-render — **never edit
+the JPEG.** The render is deterministic; an unchanged card produces a
+byte-identical file.
+
+`tools/` holds the three scripts this needs, all run through the venv above:
+
+| | |
+|---|---|
+| `tools/install-seo-tooling.sh` | Reinstalls claude-seo into *this* repo's `.claude/`, never `~/.claude`. Run it after a fresh clone. |
+| `tools/render-og-image.py` | `assets/og-card.html` -> `assets/og-image.jpg`. |
+| `tools/measure-lcp.py` | Reports the LCP element, LCP time and CLS against a local server. |
+
+These are maintenance scripts, not a build step — the site still deploys as
+static files with nothing to compile.
 
 Measured, not guessed: the LCP element is the `builds` text span (~176 ms local,
 CLS 0.004), so **no image needs `fetchpriority="high"`**. Do not add one to the
