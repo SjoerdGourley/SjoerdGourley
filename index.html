@@ -58,6 +58,7 @@
     }
 
     html {
+      overflow-x: clip;
       scroll-behavior: smooth;
       background-color: var(--canvas);
     }
@@ -1152,8 +1153,8 @@
       .card-4 { width: 90px; height: 120px; left: 36%; top: 50px; }
       .card-5 { width: 130px; height: 180px; left: 46%; top: 0; }
       .card-6 { width: 95px; height: 130px; left: 62%; top: 40px; }
-      .card-7 { width: 100px; height: 140px; left: 74%; top: 20px; }
-      .card-8 { width: 80px; height: 110px; left: 87%; top: 35px; }
+      .card-7 { width: 100px; height: 140px; left: auto; right: 14%; top: 20px; }
+      .card-8 { width: 80px; height: 110px; left: auto; right: 1%; top: 35px; }
 
       .subline {
         margin-top: 280px;
@@ -1869,6 +1870,9 @@
         scrub: 0.8,
         onUpdate: function (self) {
           var p = self.progress;
+          // No sideways fan on narrow screens: 260px of travel does not fit in
+          // a 375px viewport and is what made the page scroll horizontally.
+          var fanOut = window.innerWidth >= 768;
           // Ghost word scales up
           gsap.set(".big-results", { scale: 1 + 0.15 * p, opacity: 1 - 0.4 * p });
           // Headline rises out
@@ -1888,7 +1892,7 @@
             var m = moves[i] || { x: 0, y: 0, rot: 0 };
             var rest = parseFloat(card.dataset.restRot) || 0;
             gsap.set(card.parentElement, {
-              x: m.x * p,
+              x: fanOut ? m.x * p : 0,
               y: m.y * p,
               rotation: rest + m.rot * p
             });
