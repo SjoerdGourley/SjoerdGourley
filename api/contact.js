@@ -24,7 +24,11 @@ const FROM_REPLY = 'Sjoerd Gourley <hello@sjoerdgourley.com>';
 // A form that mails an address the visitor types is usable to send unsolicited
 // post from this domain. These caps gate the confirmation only; the
 // notification to Sjoerd always goes out.
-const CONFIRM_PER_IP_PER_HOUR = 3;
+// Per address is the cap that protects a person from being mailed repeatedly.
+// Per network is the blunter one, and it has to stay loose: an office, a cafe
+// or a mobile carrier puts many unrelated people behind one address, and three
+// an hour would silently punish the third of them.
+const CONFIRM_PER_IP_PER_HOUR = 10;
 const CONFIRM_PER_EMAIL_PER_DAY = 2;
 
 /** Bots fill every field they can see and they fill them instantly. */
@@ -142,7 +146,10 @@ const confirmHtml = (m) =>
  */
 async function recentConfirms(serviceKey, email, ipHash, excludeId) {
   const since = new Date(Date.now() - 24 * 3600 * 1000).toISOString();
-  const filters = [`created_at=gte.${since}`, 'select=email,ip_hash,created_at'];
+  // Count confirmations actually sent, not submissions. Counting submissions
+  // made the limit self-reinforcing: a suppressed attempt still incremented it.
+  const filters = [`created_at=gte.${since}`, 'confirmed=eq.true',
+                   'select=email,ip_hash,created_at'];
   if (excludeId) filters.push(`id=neq.${excludeId}`);
   const or = ipHash
     ? `or=(email.eq.${encodeURIComponent(email)},ip_hash.eq.${ipHash})`
@@ -272,26 +279,6 @@ module.exports = async (req, res) => {
     console.error('resend threw', err && err.message);
   }
 
-  // Must be awaited. Vercel freezes the process the moment the response is
-  // sent, so a fire-and-forget fetch here never lands and `delivered` stays
-  // false forever. The message is already stored either way, so a failure
-  // costs an inaccurate flag and nothing more.
-  if (delivered && rowId && serviceKey) {
-    try {
-      await fetch(`${SUPABASE_URL}/rest/v1/contact_messages?id=eq.${rowId}`, {
-        method: 'PATCH',
-        headers: {
-          apikey: serviceKey,
-          Authorization: `Bearer ${serviceKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ delivered: true }),
-      });
-    } catch (err) {
-      console.error('delivered flag patch failed', err && err.message);
-    }
-  }
-
   // Receipt for the sender, only once the notification actually went out:
   // confirming receipt of something Sjoerd never got would be a lie. Capped,
   // because the address comes from whoever filled the form and this is the one
@@ -334,6 +321,26 @@ module.exports = async (req, res) => {
       }
     } else {
       console.warn('confirmation suppressed by rate limit', seen);
+    }
+  }
+
+  // One write for both flags, and it must be awaited: Vercel freezes the
+  // process the moment the response is sent, so a fire-and-forget fetch here
+  // never lands. confirmed is what the next request's rate limit reads, so
+  // losing it would let the cap drift open.
+  if (rowId && serviceKey && (delivered || confirmed)) {
+    try {
+      await fetch(`${SUPABASE_URL}/rest/v1/contact_messages?id=eq.${rowId}`, {
+        method: 'PATCH',
+        headers: {
+          apikey: serviceKey,
+          Authorization: `Bearer ${serviceKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ delivered, confirmed }),
+      });
+    } catch (err) {
+      console.error('flag patch failed', err && err.message);
     }
   }
 
