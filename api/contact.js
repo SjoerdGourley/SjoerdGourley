@@ -37,6 +37,66 @@ async function hashIp(ip, salt) {
     .slice(0, 32);
 }
 
+/**
+ * The notification, in the site's own palette.
+ *
+ * Tables and inline styles throughout: mail clients routinely drop <style>
+ * blocks, flexbox and grid, and none of them understand CSS custom properties,
+ * so the tokens are written out literally. No webfont either -- a system stack
+ * is what actually renders, and Inter would silently fall back anyway.
+ */
+function emailHtml(m) {
+  const CANVAS = '#222222';
+  const SURFACE = '#282828';
+  const LINE = '#3a3b3d';
+  const INK = '#ffffff';
+  const MUTED = '#bbcde5';
+  const SUBTLE = '#8f9aa8';
+  const TERTIARY = '#6b7480';
+  const ACCENT = '#639fab';
+  const FONT =
+    "-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif";
+
+  const rule = `<div style="height:1px;line-height:1px;font-size:0;background:${LINE};">&nbsp;</div>`;
+
+  return `<!doctype html>
+<html><head><meta charset="utf-8" />
+<meta name="color-scheme" content="dark" />
+<meta name="supported-color-schemes" content="dark" />
+</head>
+<body style="margin:0;padding:0;background:${CANVAS};">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:${CANVAS};">
+<tr><td align="center" style="padding:32px 16px;">
+  <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0"
+         style="width:100%;max-width:600px;background:${SURFACE};border:1px solid ${LINE};border-radius:12px;">
+    <tr><td style="padding:28px 28px 0;font-family:${FONT};font-size:12px;font-weight:600;letter-spacing:0.28em;text-transform:uppercase;color:${SUBTLE};">
+      New message
+    </td></tr>
+    <tr><td style="padding:16px 28px 0;font-family:${FONT};font-size:22px;font-weight:600;letter-spacing:-0.02em;color:${INK};">
+      ${esc(m.name)}
+    </td></tr>
+    <tr><td style="padding:6px 28px 0;font-family:${FONT};font-size:14px;">
+      <a href="mailto:${esc(m.email)}" style="color:${ACCENT};text-decoration:none;">${esc(m.email)}</a>
+    </td></tr>
+    <tr><td style="padding:22px 28px 0;">${rule}</td></tr>
+    <tr><td style="padding:22px 28px 0;font-family:${FONT};font-size:11px;font-weight:600;letter-spacing:0.24em;text-transform:uppercase;color:${SUBTLE};">
+      What it's about
+    </td></tr>
+    <tr><td style="padding:8px 28px 0;font-family:${FONT};font-size:16px;color:${INK};">
+      ${esc(m.subject)}
+    </td></tr>
+    <tr><td style="padding:24px 28px 0;font-family:${FONT};font-size:15px;line-height:1.65;color:${MUTED};white-space:pre-wrap;">${esc(m.message)}</td></tr>
+    <tr><td style="padding:28px 28px 0;">${rule}</td></tr>
+    <tr><td style="padding:18px 28px 28px;font-family:${FONT};font-size:12px;line-height:1.5;color:${TERTIARY};">
+      Sent from the contact form on sjoerdgourley.com. Reply straight to this
+      message and it reaches ${esc(m.name)}.
+    </td></tr>
+  </table>
+</td></tr>
+</table>
+</body></html>`;
+}
+
 module.exports = async (req, res) => {
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
@@ -124,17 +184,17 @@ module.exports = async (req, res) => {
         from: FROM,
         to: [TO],
         reply_to: record.email,
-        subject: `sjoerdgourley.com — ${record.subject}`,
+        subject: `sjoerdgourley.com · ${record.subject}`,
         text: [
           `From:    ${record.name} <${record.email}>`,
           `Subject: ${record.subject}`,
           '',
           record.message,
+          '',
+          '--',
+          'Sent from the contact form on sjoerdgourley.com',
         ].join('\n'),
-        html: `<p><strong>${esc(record.name)}</strong> &lt;${esc(record.email)}&gt;</p>
-<p><em>${esc(record.subject)}</em></p>
-<hr />
-<p style="white-space:pre-wrap">${esc(record.message)}</p>`,
+        html: emailHtml(record),
       }),
     });
     delivered = r.ok;
