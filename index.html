@@ -264,6 +264,11 @@
       transition: opacity 0.3s ease;
       display: flex;
       justify-content: flex-end;
+      /* The closed panel sits at translateX(100%), and a fixed overlay is not
+         contained by body's overflow-x: clip. Clipping here guarantees the
+         off-screen panel can never add to the page width. Defensive: not a
+         bug observed on this page. */
+      overflow: hidden;
     }
     .mobile-drawer.open {
       opacity: 1;
@@ -1136,7 +1141,10 @@
       }
       .cards-row {
         height: 220px;
-        top: 52%;
+        /* The hero centres its flex column, so raising the subline's margin
+           only moves it half as far. Lifting the deck is the direct lever:
+           at 52% the pill and the subline sat 135px inside the cards. */
+        top: 38%;
       }
       .card-1 { width: 80px; height: 110px; left: 0%; top: 20px; }
       .card-2 { width: 90px; height: 130px; left: 10%; top: 35px; }
@@ -1148,7 +1156,7 @@
       .card-8 { width: 80px; height: 110px; left: 87%; top: 35px; }
 
       .subline {
-        margin-top: 130px;
+        margin-top: 280px;
       }
       .positioning-grid,
       .channels-grid {
