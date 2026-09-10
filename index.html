@@ -1047,6 +1047,19 @@
       padding-bottom: 140px;
     }
 
+    /* The cards carry `transition: transform .4s` for their hover lift, and
+       GSAP animates `transform` on those same elements for the entrance. Both
+       then own one property: GSAP writes a value every frame and the browser
+       eases towards it, so the card lags ~400ms behind its own tween. Opacity
+       is not transitioned, so it arrives on time and the card sits at full
+       strength while still 40px low -- which is what the staircase was.
+       This kills the transition for as long as GSAP is driving the element.
+       !important because it must beat every card's own transition regardless
+       of where that rule sits in the sheet. */
+    .is-entering {
+      transition: none !important;
+    }
+
     /* Responsive */
     @media (max-width: 1024px) {
       .positioning-grid {
@@ -1939,7 +1952,21 @@
         });
       });
 
-      gsap.from(".position-card", {
+      // Cards hover-lift with a CSS transition on `transform` and enter with a
+      // GSAP tween on the same property. Hand the property to GSAP for the
+      // duration of the tween and give it back afterwards, so the two never
+      // ease the same transform at once. See `.is-entering` in the stylesheet.
+      function enterCards(selector, vars) {
+        var els = gsap.utils.toArray(selector);
+        if (!els.length) return;
+        els.forEach(function (el) { el.classList.add("is-entering"); });
+        vars.onComplete = function () {
+          els.forEach(function (el) { el.classList.remove("is-entering"); });
+        };
+        gsap.from(els, vars);
+      }
+
+      enterCards(".position-card", {
         opacity: 0,
         y: 40,
         duration: 0.8,
@@ -1948,7 +1975,7 @@
         scrollTrigger: { trigger: ".positioning-grid", start: "top 80%" }
       });
 
-      gsap.from(".project-card", {
+      enterCards(".project-card", {
         opacity: 0,
         y: 40,
         duration: 0.8,
@@ -1957,7 +1984,7 @@
         scrollTrigger: { trigger: ".cards-stack", start: "top 85%" }
       });
 
-      gsap.from(".channel-card", {
+      enterCards(".channel-card", {
         opacity: 0,
         y: 30,
         duration: 0.7,
