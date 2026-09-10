@@ -357,11 +357,18 @@
       transform: translateY(105%);
     }
 
-    /* Ghost word "builds" scaled behind the cards */
+    /* Ghost word "builds" scaled behind the cards.
+       The deck covered the lower two thirds of the word, so it gets an extra
+       lift on top of the measured -24px. That lift has to scale the way the
+       word does (font-size is 22vw until it clamps) -- a flat 60px is right at
+       1440 but overshoots at 900, where it pushes "builds" clear above the
+       name and turns the name from a cap on the word into a line inside it.
+       .subline puts the same amount back below, so the deck, the pill and the
+       name do not move: only the ghost does. */
     .big-results-wrap {
       position: relative;
       width: 100%;
-      margin-top: -24px;
+      margin-top: calc(-24px - clamp(0px, 3.7vw, 55px));
       display: flex;
       justify-content: center;
       z-index: 1;
@@ -472,7 +479,11 @@
 
     /* Subline below cards */
     .subline {
-      margin-top: 190px;
+      /* The mirror of the ghost's extra lift, so the hero column keeps its
+         height and its centring. The name itself cannot move up: the fixed nav
+         is 92px tall and on an 800px laptop any upward shift tucks the
+         headline underneath it. */
+      margin-top: calc(190px + clamp(0px, 3.7vw, 55px));
       text-align: center;
       z-index: 4;
       position: relative;
@@ -1162,6 +1173,13 @@
       .card-6 { width: 95px; height: 130px; left: 62%; top: 40px; }
       .card-7 { width: 100px; height: 140px; left: auto; right: 14%; top: 20px; }
       .card-8 { width: 80px; height: 110px; left: auto; right: 1%; top: 35px; }
+
+      /* The desktop ghost lift is undone here. At this width the deck starts
+         below the ghost word, so nothing is hidden and the lift would only
+         push "builds" above the name -- a different composition, not a fix. */
+      .big-results-wrap {
+        margin-top: -24px;
+      }
 
       .subline {
         margin-top: 280px;
