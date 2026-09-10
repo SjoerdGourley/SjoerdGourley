@@ -44,6 +44,19 @@
       box-sizing: border-box;
     }
 
+    /* Priority 1 (Accessibility): every operable control needs a visible
+       focus indicator. The browser default ring is near-invisible on this
+       canvas, and only .nav-cta and the form fields defined their own. */
+    a:focus-visible,
+    button:focus-visible,
+    input:focus-visible,
+    textarea:focus-visible,
+    [tabindex]:focus-visible {
+      outline: 2px solid var(--accent-text);
+      outline-offset: 3px;
+      border-radius: 4px;
+    }
+
     html {
       scroll-behavior: smooth;
       background-color: var(--canvas);
@@ -957,6 +970,28 @@
       color: var(--ink);
     }
 
+    /* Priority 7 (Animation), severity High: respect the OS motion setting.
+       This covers CSS transitions and smooth scrolling; the GSAP timelines are
+       guarded separately in the script below. */
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      html {
+        scroll-behavior: auto;
+      }
+      /* The hero name's masked start state is CSS, not gsap.set(): without
+         this it stays parked below its own overflow:hidden mask and the
+         name never appears at all. */
+      .small-team .word > span {
+        transform: none;
+      }
+    }
+
     /* Responsive */
     @media (max-width: 1024px) {
       .positioning-grid {
@@ -1066,7 +1101,7 @@
           <polyline points="7 7 17 7 17 17" />
         </svg>
       </a>
-      <button class="hamburger" id="hamburgerBtn" aria-label="Open navigation menu">
+      <button class="hamburger" id="hamburgerBtn" aria-label="Open navigation menu" aria-expanded="false" aria-controls="mobileDrawer">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <line x1="3" y1="6" x2="21" y2="6" />
           <line x1="3" y1="12" x2="21" y2="12" />
@@ -1567,6 +1602,12 @@
     (function () {
       gsap.registerPlugin(ScrollTrigger);
 
+      // Skipping the motion block leaves the page in its finished state,
+      // because almost every hidden start state comes from a gsap.set() below.
+      // The one exception is the hero name's masked word, which starts
+      // translated in CSS -- the reduced-motion media query resets it.
+      var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
       // Set copyright year
       var yrEl = document.getElementById("year");
       if (yrEl) yrEl.textContent = new Date().getFullYear();
@@ -1589,22 +1630,36 @@
       var drawerClose = document.getElementById("drawerClose");
 
       if (hamburger && drawer) {
+        // One writer for the drawer state, so aria-expanded can never drift
+        // out of sync with the visual state.
+        var setDrawer = function (open) {
+          drawer.classList.toggle("open", open);
+          hamburger.setAttribute("aria-expanded", open ? "true" : "false");
+        };
+
         hamburger.addEventListener("click", function () {
-          drawer.classList.add("open");
+          setDrawer(!drawer.classList.contains("open"));
         });
         drawerClose.addEventListener("click", function () {
-          drawer.classList.remove("open");
+          setDrawer(false);
         });
         drawer.addEventListener("click", function (e) {
-          if (e.target === drawer) drawer.classList.remove("open");
+          if (e.target === drawer) setDrawer(false);
+        });
+        document.addEventListener("keydown", function (e) {
+          if (e.key === "Escape" && drawer.classList.contains("open")) {
+            setDrawer(false);
+            hamburger.focus();
+          }
         });
         document.querySelectorAll(".drawer-link").forEach(function (link) {
           link.addEventListener("click", function () {
-            drawer.classList.remove("open");
+            setDrawer(false);
           });
         });
       }
 
+      if (!reduceMotion) {
       // ============================================================
       // INITIAL STATES + APPLY DATA-ROT FROM REFERENCE
       // ============================================================
@@ -1838,47 +1893,60 @@
         ease: "power3.out",
         scrollTrigger: { trigger: ".contact-box", start: "top 85%" }
       });
+      } // end if (!reduceMotion)
 
       // ============================================================
       // STATS REVEAL + COUNT-UP OBSERVER
       // ============================================================
-      gsap.from(".stats-panel", {
-        opacity: 0,
-        y: 50,
-        scale: 0.98,
-        duration: 1,
-        ease: "power3.out",
-        scrollTrigger: { trigger: ".stats-panel", start: "top 80%" }
-      });
-
-      ScrollTrigger.create({
-        trigger: ".stats-panel",
-        start: "top 75%",
-        onEnter: function () {
-          document.querySelectorAll(".stat-num").forEach(function (el) {
-            var target = parseFloat(el.dataset.count);
-            var span = el.querySelector("span");
-            gsap.to(
-              { v: 0 },
-              {
-                v: target,
-                duration: 2,
-                ease: "power2.out",
-                onUpdate: function () {
-                  span.textContent = Math.floor(this.targets()[0].v).toLocaleString();
-                }
+      function fillCounters() {
+        document.querySelectorAll(".stat-num").forEach(function (el) {
+          var target = parseFloat(el.dataset.count);
+          var span = el.querySelector("span");
+          if (reduceMotion) {
+            // The number is the content, not the animation: show it outright.
+            span.textContent = target.toLocaleString();
+            return;
+          }
+          gsap.to(
+            { v: 0 },
+            {
+              v: target,
+              duration: 2,
+              ease: "power2.out",
+              onUpdate: function () {
+                span.textContent = Math.floor(this.targets()[0].v).toLocaleString();
               }
-            );
-          });
-        },
-        once: true
-      });
+            }
+          );
+        });
+      }
+
+      if (reduceMotion) {
+        fillCounters();
+      } else {
+        gsap.from(".stats-panel", {
+          opacity: 0,
+          y: 50,
+          scale: 0.98,
+          duration: 1,
+          ease: "power3.out",
+          scrollTrigger: { trigger: ".stats-panel", start: "top 80%" }
+        });
+
+        ScrollTrigger.create({
+          trigger: ".stats-panel",
+          start: "top 75%",
+          onEnter: fillCounters,
+          once: true
+        });
+      }
 
       // ============================================================
       // BUTTON PRESS SPRING
       // ============================================================
       document.querySelectorAll(".nav-cta, .arrow-pill, .btn-submit").forEach(function (btn) {
         btn.addEventListener("click", function () {
+          if (reduceMotion) return;
           gsap.fromTo(
             btn,
             { scale: 1 },
