@@ -17,6 +17,15 @@
 const SUPABASE_URL = 'https://ezadbsekqvfzribcchek.supabase.co';
 const TO = 'hello@sjoerdgourley.com';
 const FROM = 'sjoerdgourley.com <noreply@sjoerdgourley.com>';
+// The confirmation goes out as hello@ rather than noreply@: it invites a reply,
+// and a From nobody can answer would contradict that in the same breath.
+const FROM_REPLY = 'Sjoerd Gourley <hello@sjoerdgourley.com>';
+
+// A form that mails an address the visitor types is usable to send unsolicited
+// post from this domain. These caps gate the confirmation only; the
+// notification to Sjoerd always goes out.
+const CONFIRM_PER_IP_PER_HOUR = 3;
+const CONFIRM_PER_EMAIL_PER_DAY = 2;
 
 /** Bots fill every field they can see and they fill them instantly. */
 const MIN_FILL_MS = 2000;
@@ -45,7 +54,7 @@ async function hashIp(ip, salt) {
  * so the tokens are written out literally. No webfont either -- a system stack
  * is what actually renders, and Inter would silently fall back anyway.
  */
-function emailHtml(m) {
+function emailShell(rowsHtml) {
   const CANVAS = '#222222';
   const SURFACE = '#282828';
   const LINE = '#3a3b3d';
@@ -69,6 +78,16 @@ function emailHtml(m) {
 <tr><td align="center" style="padding:32px 16px;">
   <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0"
          style="width:100%;max-width:600px;background:${SURFACE};border:1px solid ${LINE};border-radius:12px;">
+    ${rowsHtml({ INK, MUTED, SUBTLE, TERTIARY, ACCENT, FONT, rule })}
+  </table>
+</td></tr>
+</table>
+</body></html>`;
+}
+
+/** What lands in Sjoerd's inbox. */
+const notifyHtml = (m) =>
+  emailShell(({ INK, MUTED, SUBTLE, TERTIARY, ACCENT, FONT, rule }) => `
     <tr><td style="padding:28px 28px 0;font-family:${FONT};font-size:12px;font-weight:600;letter-spacing:0.28em;text-transform:uppercase;color:${SUBTLE};">
       New message
     </td></tr>
@@ -90,11 +109,61 @@ function emailHtml(m) {
     <tr><td style="padding:18px 28px 28px;font-family:${FONT};font-size:12px;line-height:1.5;color:${TERTIARY};">
       Sent from the contact form on sjoerdgourley.com. Reply straight to this
       message and it reaches ${esc(m.name)}.
+    </td></tr>`);
+
+/** What lands in the sender's inbox. One per submission. */
+const confirmHtml = (m) =>
+  emailShell(({ INK, MUTED, SUBTLE, TERTIARY, FONT, rule }) => `
+    <tr><td style="padding:28px 28px 0;font-family:${FONT};font-size:12px;font-weight:600;letter-spacing:0.28em;text-transform:uppercase;color:${SUBTLE};">
+      Message received
     </td></tr>
-  </table>
-</td></tr>
-</table>
-</body></html>`;
+    <tr><td style="padding:16px 28px 0;font-family:${FONT};font-size:22px;font-weight:600;letter-spacing:-0.02em;color:${INK};">
+      Got it, ${esc(m.name.split(' ')[0])}.
+    </td></tr>
+    <tr><td style="padding:12px 28px 0;font-family:${FONT};font-size:15px;line-height:1.65;color:${MUTED};">
+      Your message reached me. I read everything and I answer in English or Dutch.
+    </td></tr>
+    <tr><td style="padding:24px 28px 0;">${rule}</td></tr>
+    <tr><td style="padding:22px 28px 0;font-family:${FONT};font-size:11px;font-weight:600;letter-spacing:0.24em;text-transform:uppercase;color:${SUBTLE};">
+      What you sent
+    </td></tr>
+    <tr><td style="padding:10px 28px 0;font-family:${FONT};font-size:16px;color:${INK};">
+      ${esc(m.subject)}
+    </td></tr>
+    <tr><td style="padding:14px 28px 0;font-family:${FONT};font-size:15px;line-height:1.65;color:${MUTED};white-space:pre-wrap;">${esc(m.message)}</td></tr>
+    <tr><td style="padding:28px 28px 0;">${rule}</td></tr>
+    <tr><td style="padding:18px 28px 28px;font-family:${FONT};font-size:12px;line-height:1.5;color:${TERTIARY};">
+      Forgot something? Reply to this email and it lands in the same place.
+    </td></tr>`);
+
+/**
+ * How many confirmations this address and this network already triggered.
+ * One request, counted in JS. The row just inserted is excluded.
+ */
+async function recentConfirms(serviceKey, email, ipHash, excludeId) {
+  const since = new Date(Date.now() - 24 * 3600 * 1000).toISOString();
+  const filters = [`created_at=gte.${since}`, 'select=email,ip_hash,created_at'];
+  if (excludeId) filters.push(`id=neq.${excludeId}`);
+  const or = ipHash
+    ? `or=(email.eq.${encodeURIComponent(email)},ip_hash.eq.${ipHash})`
+    : `email=eq.${encodeURIComponent(email)}`;
+  try {
+    const r = await fetch(
+      `${SUPABASE_URL}/rest/v1/contact_messages?${or}&${filters.join('&')}`,
+      { headers: { apikey: serviceKey, Authorization: `Bearer ${serviceKey}` } });
+    if (!r.ok) return { perEmail: 0, perIp: 0 };
+    const rows = await r.json();
+    const hourAgo = Date.now() - 3600 * 1000;
+    return {
+      perEmail: rows.filter((x) => x.email === email).length,
+      perIp: ipHash
+        ? rows.filter((x) => x.ip_hash === ipHash && Date.parse(x.created_at) > hourAgo).length
+        : 0,
+    };
+  } catch {
+    // Unknown means unknown: do not let a failed lookup open the gate.
+    return { perEmail: Infinity, perIp: Infinity };
+  }
 }
 
 module.exports = async (req, res) => {
@@ -194,7 +263,7 @@ module.exports = async (req, res) => {
           '--',
           'Sent from the contact form on sjoerdgourley.com',
         ].join('\n'),
-        html: emailHtml(record),
+        html: notifyHtml(record),
       }),
     });
     delivered = r.ok;
@@ -223,10 +292,55 @@ module.exports = async (req, res) => {
     }
   }
 
+  // Receipt for the sender, only once the notification actually went out:
+  // confirming receipt of something Sjoerd never got would be a lie. Capped,
+  // because the address comes from whoever filled the form and this is the one
+  // place the site mails a stranger on request.
+  let confirmed = false;
+  if (delivered && serviceKey) {
+    const seen = await recentConfirms(serviceKey, record.email, record.ip_hash, rowId);
+    if (seen.perEmail < CONFIRM_PER_EMAIL_PER_DAY && seen.perIp < CONFIRM_PER_IP_PER_HOUR) {
+      try {
+        const r = await fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${resendKey}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            from: FROM_REPLY,
+            to: [record.email],
+            reply_to: TO,
+            subject: `Got your message \u00b7 ${record.subject}`,
+            text: [
+              `Got it, ${record.name.split(' ')[0]}.`,
+              '',
+              'Your message reached me. I read everything and I answer in English or Dutch.',
+              '',
+              `What you sent: ${record.subject}`,
+              '',
+              record.message,
+              '',
+              '--',
+              'Forgot something? Reply to this email and it lands in the same place.',
+            ].join('\n'),
+            html: confirmHtml(record),
+          }),
+        });
+        confirmed = r.ok;
+        if (!r.ok) console.error('confirmation failed', r.status, await r.text());
+      } catch (err) {
+        console.error('confirmation threw', err && err.message);
+      }
+    } else {
+      console.warn('confirmation suppressed by rate limit', seen);
+    }
+  }
+
   if (!delivered && !rowId) {
     return res.status(500).json({ ok: false, error: 'not_stored_not_sent' });
   }
-  return res.status(200).json({ ok: true, stored: Boolean(rowId), delivered });
+  return res.status(200).json({ ok: true, stored: Boolean(rowId), delivered, confirmed });
 };
 
 function safeParse(s) {
