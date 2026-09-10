@@ -143,17 +143,24 @@ module.exports = async (req, res) => {
     console.error('resend threw', err && err.message);
   }
 
-  // Best effort: the message is already safe, this only corrects the flag.
+  // Must be awaited. Vercel freezes the process the moment the response is
+  // sent, so a fire-and-forget fetch here never lands and `delivered` stays
+  // false forever. The message is already stored either way, so a failure
+  // costs an inaccurate flag and nothing more.
   if (delivered && rowId && serviceKey) {
-    fetch(`${SUPABASE_URL}/rest/v1/contact_messages?id=eq.${rowId}`, {
-      method: 'PATCH',
-      headers: {
-        apikey: serviceKey,
-        Authorization: `Bearer ${serviceKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ delivered: true }),
-    }).catch(() => {});
+    try {
+      await fetch(`${SUPABASE_URL}/rest/v1/contact_messages?id=eq.${rowId}`, {
+        method: 'PATCH',
+        headers: {
+          apikey: serviceKey,
+          Authorization: `Bearer ${serviceKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ delivered: true }),
+      });
+    } catch (err) {
+      console.error('delivered flag patch failed', err && err.message);
+    }
   }
 
   if (!delivered && !rowId) {
