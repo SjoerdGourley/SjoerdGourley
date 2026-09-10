@@ -53,7 +53,9 @@
       background-color: var(--canvas);
       color: var(--ink);
       font-family: var(--font-sans);
-      overflow-x: hidden;
+      /* `clip` (not `hidden`) — `hidden` makes body a scroll container and
+         breaks `position: sticky` on the projects deck. */
+      overflow-x: clip;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
       min-height: 100vh;
@@ -549,10 +551,37 @@
     /* ==========================================================================
        5. PROJECTS GRID
        ========================================================================== */
-    .projects-grid {
+    /* Two columns: the intro pins on the left, the deck stacks on the right. */
+    .work-layout {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 28px;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 64px;
+      align-items: start;
+    }
+    .work-intro {
+      position: sticky;
+      top: 140px;
+    }
+    .work-intro .section-head {
+      margin-bottom: 0;
+    }
+
+    /* Stacking deck — vanilla port of ContainerScroll / CardSticky.
+       ContainerScroll = the perspective wrapper.
+       CardSticky      = position:sticky + top:(i * incrementY) + translateZ(i * incrementZ).
+       No React, no motion, no Tailwind: the effect is entirely CSS sticky. */
+    .cards-stack {
+      perspective: 1000px;
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+      padding-bottom: 30vh;
+    }
+    .stack-card {
+      position: sticky;
+      top: calc(120px + var(--i) * 56px);
+      transform: translateZ(calc(var(--i) * 5px));
+      backface-visibility: hidden;
     }
     .project-card {
       background: var(--surface-1);
@@ -930,9 +959,15 @@
 
     /* Responsive */
     @media (max-width: 1024px) {
-      .positioning-grid,
-      .projects-grid {
+      .positioning-grid {
         grid-template-columns: repeat(2, 1fr);
+      }
+      .work-layout {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+      .work-intro {
+        position: static;
       }
       .channels-grid {
         grid-template-columns: repeat(3, 1fr);
@@ -983,9 +1018,15 @@
         margin-top: 130px;
       }
       .positioning-grid,
-      .projects-grid,
       .channels-grid {
         grid-template-columns: 1fr;
+      }
+      .cards-stack {
+        gap: 24px;
+        padding-bottom: 20vh;
+      }
+      .stack-card {
+        top: calc(84px + var(--i) * 26px);
       }
       .form-grid {
         grid-template-columns: 1fr;
@@ -1185,15 +1226,19 @@
        ========================================================================== -->
   <section class="section-spacing" id="work" style="padding-top: 40px;">
     <div class="container">
-      <div class="section-head">
-        <div class="eyebrow">SELECTED WORK</div>
-        <h2>Built from scratch, <em>shipped to production</em>.</h2>
-        <p>A collection of recent systems spanning distributed cloud infrastructure, robotics tooling, and graphics engines.</p>
-      </div>
+      <div class="work-layout">
+        <div class="work-intro">
+          <div class="section-head">
+            <div class="eyebrow">SELECTED WORK</div>
+            <h2>Built from scratch, <em>shipped to production</em>.</h2>
+            <p>A collection of recent systems spanning distributed cloud infrastructure, robotics tooling, and graphics engines.</p>
+          </div>
+        </div>
 
-      <div class="projects-grid">
-        <!-- Project 1 -->
-        <div class="project-card">
+        <div class="cards-stack">
+          <!-- Project 1 -->
+          <div class="stack-card" style="--i:0">
+          <div class="project-card">
           <div class="project-media">
             <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&h=400&fit=crop&q=80" alt="Telemetry Platform" />
           </div>
@@ -1209,9 +1254,11 @@
             </div>
           </div>
         </div>
+          </div>
 
-        <!-- Project 2 -->
-        <div class="project-card">
+          <!-- Project 2 -->
+          <div class="stack-card" style="--i:1">
+          <div class="project-card">
           <div class="project-media">
             <img src="https://images.unsplash.com/photo-1581092335397-9583fe92d232?w=600&h=400&fit=crop&q=80" alt="Robotics Controller" />
           </div>
@@ -1227,9 +1274,11 @@
             </div>
           </div>
         </div>
+          </div>
 
-        <!-- Project 3 -->
-        <div class="project-card">
+          <!-- Project 3 -->
+          <div class="stack-card" style="--i:2">
+          <div class="project-card">
           <div class="project-media">
             <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&h=400&fit=crop&q=80" alt="Voxel Engine" />
           </div>
@@ -1245,9 +1294,11 @@
             </div>
           </div>
         </div>
+          </div>
 
-        <!-- Project 4 -->
-        <div class="project-card">
+          <!-- Project 4 -->
+          <div class="stack-card" style="--i:3">
+          <div class="project-card">
           <div class="project-media">
             <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=600&h=400&fit=crop&q=80" alt="Edge Mesh" />
           </div>
@@ -1263,9 +1314,11 @@
             </div>
           </div>
         </div>
+          </div>
 
-        <!-- Project 5 -->
-        <div class="project-card">
+          <!-- Project 5 -->
+          <div class="stack-card" style="--i:4">
+          <div class="project-card">
           <div class="project-media">
             <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&h=400&fit=crop&q=80" alt="BioSync Platform" />
           </div>
@@ -1281,9 +1334,11 @@
             </div>
           </div>
         </div>
+          </div>
 
-        <!-- Project 6 -->
-        <div class="project-card">
+          <!-- Project 6 -->
+          <div class="stack-card" style="--i:5">
+          <div class="project-card">
           <div class="project-media">
             <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&h=400&fit=crop&q=80" alt="Quantum Simulator" />
           </div>
@@ -1297,6 +1352,8 @@
               <span class="tag">WebGL</span>
               <span class="tag">Linear Algebra</span>
             </div>
+          </div>
+        </div>
           </div>
         </div>
       </div>
@@ -1762,7 +1819,7 @@
         duration: 0.8,
         stagger: 0.08,
         ease: "power3.out",
-        scrollTrigger: { trigger: ".projects-grid", start: "top 80%" }
+        scrollTrigger: { trigger: ".cards-stack", start: "top 85%" }
       });
 
       gsap.from(".channel-card", {
