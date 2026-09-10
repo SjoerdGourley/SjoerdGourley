@@ -33,7 +33,7 @@
       --font-mono: 'JetBrains Mono', monospace;
 
       --radius-sm: 8px;
-      --radius-btn: 999px;
+      --radius-btn: 8px;
       --radius-card: 18px;
       --radius-media: 20px;
     }
@@ -75,16 +75,6 @@
       line-height: 1.6;
     }
 
-    /* Subtle fine grain texture over dark canvas */
-    .grain {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 99;
-      opacity: 0.035;
-      mix-blend-mode: screen;
-      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.8 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
-    }
 
     .container {
       width: 100%;
@@ -588,7 +578,9 @@
       display: flex;
       flex-direction: column;
       gap: 40px;
-      padding-bottom: 30vh;
+      /* Only enough tail for the last card to reach its pinned position.
+         30vh was sized for six cards and left a hole under four. */
+      padding-bottom: 8vh;
     }
     .stack-card {
       position: sticky;
@@ -616,6 +608,7 @@
       aspect-ratio: 16 / 10;
       overflow: hidden;
       background: var(--surface-2);
+      border-bottom: 1px solid var(--hairline);
       position: relative;
     }
     .project-media img {
@@ -722,77 +715,6 @@
       font-size: 11px;
       color: var(--ink-subtle);
       margin-top: 2px;
-    }
-
-    /* ==========================================================================
-       7. NUMBERS STRIP
-       ========================================================================== */
-    .stats-panel {
-      background: var(--surface-1);
-      border: 1px solid var(--hairline);
-      border-radius: 28px;
-      padding: 60px 48px;
-      display: grid;
-      grid-template-columns: 1.4fr 1fr 1fr 1fr;
-      gap: 36px;
-      align-items: end;
-      box-shadow: 0 40px 80px -30px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.08);
-      position: relative;
-      overflow: hidden;
-    }
-    .stats-panel::before {
-      content: "";
-      position: absolute;
-      width: 450px;
-      height: 450px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(28, 93, 153, 0.25), transparent 70%);
-      top: -180px;
-      right: -80px;
-      filter: blur(50px);
-      pointer-events: none;
-    }
-    .stats-panel h3 {
-      font-size: clamp(26px, 3vw, 38px);
-      font-weight: 800;
-      line-height: 1.1;
-      letter-spacing: -0.03em;
-      position: relative;
-      z-index: 1;
-    }
-    .stats-panel h3 em {
-      font-style: italic;
-      color: var(--accent-text);
-    }
-    .stat-item {
-      position: relative;
-      z-index: 1;
-    }
-    .stat-num {
-      font-family: var(--font-sans);
-      font-weight: 800;
-      font-size: clamp(44px, 4.5vw, 64px);
-      line-height: 1;
-      letter-spacing: -0.04em;
-      color: var(--ink);
-      display: flex;
-      align-items: baseline;
-      gap: 4px;
-    }
-    .stat-num small {
-      font-size: 0.45em;
-      color: var(--accent-text);
-      font-weight: 600;
-    }
-    .stat-lbl {
-      font-family: var(--font-mono);
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      color: var(--ink-muted);
-      margin-top: 12px;
-      padding-top: 12px;
-      border-top: 1px solid var(--hairline);
     }
 
     /* ==========================================================================
@@ -910,6 +832,19 @@
       resize: vertical;
       min-height: 110px;
     }
+    .form-status {
+      margin-top: 16px;
+      font-size: 14px;
+      line-height: 1.5;
+      color: var(--ink-muted);
+    }
+    .form-status a {
+      color: var(--accent-text);
+    }
+    .form-status[data-state="error"] {
+      color: var(--ink);
+    }
+
     .btn-submit {
       background: var(--accent-fill);
       color: #ffffff;
@@ -1007,10 +942,6 @@
       .channels-grid {
         grid-template-columns: repeat(3, 1fr);
       }
-      .stats-panel {
-        grid-template-columns: 1fr 1fr;
-        padding: 44px 32px;
-      }
       .contact-box {
         grid-template-columns: 1fr;
         padding: 44px 32px;
@@ -1078,8 +1009,6 @@
 </head>
 <body>
 
-  <div class="grain"></div>
-
   <!-- NAV -->
   <nav class="nav" id="nav">
     <a href="#" class="logo">
@@ -1090,12 +1019,11 @@
       <li><a href="#work">Work</a></li>
       <li><a href="#about">About</a></li>
       <li><a href="#channels">Channels</a></li>
-      <li><a href="#stats">Numbers</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
     <div class="nav-actions">
-      <a href="#contact" class="nav-cta">
-        Get in touch
+      <a href="mailto:hello@sjoerdgourley.com" class="nav-cta">
+        Email me
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
           <line x1="7" y1="17" x2="17" y2="7" />
           <polyline points="7 7 17 7 17 17" />
@@ -1125,11 +1053,10 @@
         <li><a href="#work" class="drawer-link">Work</a></li>
         <li><a href="#about" class="drawer-link">About</a></li>
         <li><a href="#channels" class="drawer-link">Channels</a></li>
-        <li><a href="#stats" class="drawer-link">Numbers</a></li>
         <li><a href="#contact" class="drawer-link">Contact</a></li>
       </ul>
       <a href="#contact" class="nav-cta drawer-link" style="justify-content: center; width: 100%;">
-        Get in touch
+        Email me
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
           <line x1="7" y1="17" x2="17" y2="7" />
           <polyline points="7 7 17 7 17 17" />
@@ -1156,35 +1083,35 @@
     <div class="cards-row" id="cardsRow">
       <!-- 8 project cards with data-rot and data-depth from reference -->
       <div class="card card-1" data-rot="-9" data-depth="14">
-        <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?w=400&h=600&fit=crop&q=80" alt="Hardware Prototype" />
+        <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?w=400&h=600&fit=crop&q=80" alt="" />
       </div>
       <div class="card card-2" data-rot="-5" data-depth="10">
-        <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=400&h=600&fit=crop&q=80" alt="Code Architecture" />
+        <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=400&h=600&fit=crop&q=80" alt="" />
       </div>
       <div class="card card-3" data-rot="-2" data-depth="8">
-        <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=400&h=600&fit=crop&q=80" alt="Telemetry Matrix" />
+        <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=400&h=600&fit=crop&q=80" alt="" />
       </div>
       <div class="card card-4" data-rot="3" data-depth="12">
-        <img src="https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=400&h=600&fit=crop&q=80" alt="Robotics System" />
+        <img src="https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=400&h=600&fit=crop&q=80" alt="" />
       </div>
       <div class="card card-5" data-rot="0" data-depth="6">
-        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=600&fit=crop&crop=faces&q=80" alt="Sjoerd Gourley Portrait" />
+        <img src="assets/sjoerd-gourley.jpg" width="675" height="900" alt="Sjoerd Gourley" />
       </div>
       <div class="card card-6" data-rot="4" data-depth="11">
-        <img src="https://images.unsplash.com/photo-1517077304055-6e89abbf09b0?w=400&h=600&fit=crop&q=80" alt="Silicon Board" />
+        <img src="https://images.unsplash.com/photo-1517077304055-6e89abbf09b0?w=400&h=600&fit=crop&q=80" alt="" />
       </div>
       <div class="card card-7" data-rot="7" data-depth="9">
-        <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=400&h=600&fit=crop&q=80" alt="Digital Rendering" />
+        <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=400&h=600&fit=crop&q=80" alt="" />
       </div>
       <div class="card card-8" data-rot="-4" data-depth="13">
-        <img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=400&h=600&fit=crop&q=80" alt="Server Infrastructure" />
+        <img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=400&h=600&fit=crop&q=80" alt="" />
       </div>
     </div>
 
     <!-- Subline -->
     <div class="subline" id="subline">
       <a href="#work" class="arrow-pill">
-        See what I've built
+        See what I'm building
         <span class="ar">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
             <line x1="7" y1="17" x2="17" y2="7" />
@@ -1192,7 +1119,7 @@
           </svg>
         </span>
       </a>
-      <div class="subline-text">Builder, engineer, and creator crafting software and hardware from concept to production.</div>
+      <div class="subline-text">I'm building Fidestay, a booking platform and channel manager for B&amp;B and small-hotel owners in the Netherlands.</div>
     </div>
   </section>
 
@@ -1203,8 +1130,8 @@
     <div class="container">
       <div class="section-head">
         <div class="eyebrow">WHAT I DO</div>
-        <h2>Engineering at the intersection of <em>software</em>, <em>systems</em>, and <em>craft</em>.</h2>
-        <p>Combining rigorous distributed engineering, embedded electronics, and clear technical communication.</p>
+        <h2>Three things, and I'd rather do them <em>properly</em> than do six.</h2>
+        <p>One product I'm building, one channel I'm starting, and one skill I'm learning on purpose. That's the whole list.</p>
       </div>
 
       <div class="positioning-grid">
@@ -1217,8 +1144,8 @@
               <polyline points="2 12 12 17 22 12" />
             </svg>
           </div>
-          <h3>Full-Stack Architecture</h3>
-          <p>Designing high-throughput backend services, low-latency API contracts, and performant web interfaces engineered for resilient uptime.</p>
+          <h3>Fidestay</h3>
+          <p>A booking platform for B&amp;B and small-hotel owners, plus the channel manager that keeps their rooms in sync everywhere else. Dutch market first, Limburg first of all.</p>
         </div>
 
         <!-- Card 2 -->
@@ -1237,8 +1164,8 @@
               <line x1="1" y1="14" x2="4" y2="14" />
             </svg>
           </div>
-          <h3>Embedded & Hardware</h3>
-          <p>Bridging code into physical space through custom PCB design, real-time sensor loops, low-power telemetry, and bespoke mechanical rigs.</p>
+          <h3>A channel and a community</h3>
+          <p>I'm starting a YouTube channel in English, with a paid community next to it. I haven't settled the subject yet, so I'm not going to pretend I have.</p>
         </div>
 
         <!-- Card 3 -->
@@ -1249,8 +1176,8 @@
               <polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02" />
             </svg>
           </div>
-          <h3>Technical Education</h3>
-          <p>Translating complex technical concepts into transparent, high-production video essays, open repositories, and educational breakdowns.</p>
+          <h3>Learning to trade</h3>
+          <p>I'm learning to trade properly, working toward prop-firm capital. It's a skill I'm building, not a service I sell, and I'll say so when there's something to show.</p>
         </div>
       </div>
     </div>
@@ -1259,136 +1186,85 @@
   <!-- ==========================================================================
        PROJECTS GRID
        ========================================================================== -->
-  <section class="section-spacing" id="work" style="padding-top: 40px;">
+  <section class="section-spacing" id="work" style="padding-top: 40px; padding-bottom: 220px;">
     <div class="container">
       <div class="work-layout">
         <div class="work-intro">
           <div class="section-head">
-            <div class="eyebrow">SELECTED WORK</div>
-            <h2>Built from scratch, <em>shipped to production</em>.</h2>
-            <p>A collection of recent systems spanning distributed cloud infrastructure, robotics tooling, and graphics engines.</p>
+            <div class="eyebrow">WHAT I'M BUILDING</div>
+            <h2>Fewer things, <em>further along</em>.</h2>
+            <p>Most of my time goes into one product. The rest is here too, at whatever stage it's actually at.</p>
           </div>
         </div>
 
         <div class="cards-stack">
           <!-- Project 1 -->
           <div class="stack-card" style="--i:0">
-          <div class="project-card">
-          <div class="project-media">
-            <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&h=400&fit=crop&q=80" alt="Telemetry Platform" />
-          </div>
-          <div class="project-body">
-            <div>
-              <div class="project-title">PulseEngine Telemetry</div>
-              <p class="project-desc">Real-time distributed metrics collector processing high-frequency sensor telemetry over WebSockets.</p>
+            <div class="project-card">
+              <div class="project-media"></div>
+              <div class="project-body">
+                <div>
+                  <div class="project-title">Fidestay Marketplace</div>
+                  <p class="project-desc">Where guests find and book B&amp;Bs and small hotels in Limburg, and where hosts get a listing they actually control.</p>
+                </div>
+                <div class="project-tags">
+              <span class="tag">Marketplace</span>
+              <span class="tag">Netherlands</span>
+              <span class="tag">Limburg</span>
+                </div>
+              </div>
             </div>
-            <div class="project-tags">
-              <span class="tag">Rust</span>
-              <span class="tag">WebSockets</span>
-              <span class="tag">Timescale</span>
-            </div>
-          </div>
-        </div>
           </div>
 
           <!-- Project 2 -->
           <div class="stack-card" style="--i:1">
-          <div class="project-card">
-          <div class="project-media">
-            <img src="https://images.unsplash.com/photo-1581092335397-9583fe92d232?w=600&h=400&fit=crop&q=80" alt="Robotics Controller" />
-          </div>
-          <div class="project-body">
-            <div>
-              <div class="project-title">AeroTrack Controller</div>
-              <p class="project-desc">Custom 6-DOF robotic gimbal controller with ultra-low latency optical tracking and micro-stepper drivers.</p>
+            <div class="project-card">
+              <div class="project-media"></div>
+              <div class="project-body">
+                <div>
+                  <div class="project-title">Fidestay Channel Manager</div>
+                  <p class="project-desc">One calendar, every platform. Hosts update availability once instead of chasing four dashboards and hoping nothing double-books.</p>
+                </div>
+                <div class="project-tags">
+              <span class="tag">Channel manager</span>
+              <span class="tag">Availability sync</span>
+                </div>
+              </div>
             </div>
-            <div class="project-tags">
-              <span class="tag">C++</span>
-              <span class="tag">ESP32</span>
-              <span class="tag">FreeRTOS</span>
-            </div>
-          </div>
-        </div>
           </div>
 
           <!-- Project 3 -->
           <div class="stack-card" style="--i:2">
-          <div class="project-card">
-          <div class="project-media">
-            <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&h=400&fit=crop&q=80" alt="Voxel Engine" />
-          </div>
-          <div class="project-body">
-            <div>
-              <div class="project-title">VoxelForge WebGPU</div>
-              <p class="project-desc">In-browser ray-marched sparse voxel octree renderer computing real-time global illumination with compute shaders.</p>
+            <div class="project-card">
+              <div class="project-media"></div>
+              <div class="project-body">
+                <div>
+                  <div class="project-title">The YouTube channel</div>
+                  <p class="project-desc">An English-language channel, built in the open from the first video. The subject isn't settled yet.</p>
+                </div>
+                <div class="project-tags">
+              <span class="tag">YouTube</span>
+              <span class="tag">English</span>
+                </div>
+              </div>
             </div>
-            <div class="project-tags">
-              <span class="tag">TypeScript</span>
-              <span class="tag">WebGPU</span>
-              <span class="tag">WGSL</span>
-            </div>
-          </div>
-        </div>
           </div>
 
           <!-- Project 4 -->
           <div class="stack-card" style="--i:3">
-          <div class="project-card">
-          <div class="project-media">
-            <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=600&h=400&fit=crop&q=80" alt="Edge Mesh" />
-          </div>
-          <div class="project-body">
-            <div>
-              <div class="project-title">KubeMesh Coordinator</div>
-              <p class="project-desc">Decentralized control plane orchestrating edge computing workloads across air-gapped IoT nodes.</p>
+            <div class="project-card">
+              <div class="project-media"></div>
+              <div class="project-body">
+                <div>
+                  <div class="project-title">The community</div>
+                  <p class="project-desc">A paid community alongside the channel, for people who want to go further than a video can take them.</p>
+                </div>
+                <div class="project-tags">
+              <span class="tag">Community</span>
+              <span class="tag">Paid</span>
+                </div>
+              </div>
             </div>
-            <div class="project-tags">
-              <span class="tag">Go</span>
-              <span class="tag">eBPF</span>
-              <span class="tag">Kubernetes</span>
-            </div>
-          </div>
-        </div>
-          </div>
-
-          <!-- Project 5 -->
-          <div class="stack-card" style="--i:4">
-          <div class="project-card">
-          <div class="project-media">
-            <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&h=400&fit=crop&q=80" alt="BioSync Platform" />
-          </div>
-          <div class="project-body">
-            <div>
-              <div class="project-title">NeuroSync Rig</div>
-              <p class="project-desc">High-precision bio-signal acquisition unit with active noise suppression and automated filter calibration.</p>
-            </div>
-            <div class="project-tags">
-              <span class="tag">Hardware</span>
-              <span class="tag">Python</span>
-              <span class="tag">DSP</span>
-            </div>
-          </div>
-        </div>
-          </div>
-
-          <!-- Project 6 -->
-          <div class="stack-card" style="--i:5">
-          <div class="project-card">
-          <div class="project-media">
-            <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&h=400&fit=crop&q=80" alt="Quantum Simulator" />
-          </div>
-          <div class="project-body">
-            <div>
-              <div class="project-title">QuantumSim Visualizer</div>
-              <p class="project-desc">Interactive state-vector simulator animating entanglement, decoherence, and multi-qubit gate operations.</p>
-            </div>
-            <div class="project-tags">
-              <span class="tag">React</span>
-              <span class="tag">WebGL</span>
-              <span class="tag">Linear Algebra</span>
-            </div>
-          </div>
-        </div>
           </div>
         </div>
       </div>
@@ -1398,12 +1274,12 @@
   <!-- ==========================================================================
        CHANNELS / SOCIALS
        ========================================================================== -->
-  <section class="section-spacing" id="channels" style="padding-top: 40px;">
+  <section class="section-spacing" id="channels" style="padding-top: 120px;">
     <div class="container">
       <div class="section-head">
-        <div class="eyebrow">DISTRIBUTED NETWORKS</div>
-        <h2>Direct access across <em>platforms</em> and <em>media</em>.</h2>
-        <p>Follow ongoing engineering walkthroughs, code repositories, short-form notes, and technical articles.</p>
+        <div class="eyebrow">WHERE I POST</div>
+        <h2>Same person, <em>four places</em>.</h2>
+        <p>The channel is where the long stuff will go. The rest is work in progress, half-finished screens, and whatever I'm figuring out that week.</p>
       </div>
 
       <div class="channels-grid">
@@ -1461,23 +1337,6 @@
           </div>
         </a>
 
-        <!-- Substack -->
-        <a href="https://sjoerdgourley.substack.com" target="_blank" rel="noopener noreferrer" class="channel-card">
-          <div class="channel-top">
-            <div class="channel-icon">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M22.539 8.242H1.46V5.406h21.08v2.836zM1.46 10.812V24L12 18.11 22.54 24V10.812H1.46zM22.54 0H1.46v2.836h21.08V0z"/>
-              </svg>
-            </div>
-            <div class="channel-arrow">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
-            </div>
-          </div>
-          <div>
-            <div class="channel-name">Substack</div>
-            <div class="channel-handle">Architecture Log</div>
-          </div>
-        </a>
 
         <!-- LinkedIn -->
         <a href="https://linkedin.com/in/sjoerdgourley" target="_blank" rel="noopener noreferrer" class="channel-card">
@@ -1501,41 +1360,15 @@
   </section>
 
   <!-- ==========================================================================
-       NUMBERS STRIP
-       ========================================================================== -->
-  <section class="section-spacing" id="stats" style="padding-top: 40px;">
-    <div class="container">
-      <div class="stats-panel">
-        <h3>Systemic<br /><em>Craft & Scale</em>.</h3>
-        
-        <div class="stat-item">
-          <div class="stat-num" data-count="62"><span>0</span><small>+</small></div>
-          <div class="stat-lbl">Projects Shipped</div>
-        </div>
-
-        <div class="stat-item">
-          <div class="stat-num" data-count="14"><span>0</span><small>yrs</small></div>
-          <div class="stat-lbl">Combined Craft</div>
-        </div>
-
-        <div class="stat-item">
-          <div class="stat-num" data-count="99"><span>0</span><small>.8%</small></div>
-          <div class="stat-lbl">Uptime & Reliability</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ==========================================================================
        CONTACT FORM
        ========================================================================== -->
   <section class="section-spacing" id="contact" style="padding-top: 40px; padding-bottom: 140px;">
     <div class="container">
       <div class="contact-box">
         <div class="contact-left">
-          <div class="eyebrow">START A CONVERSATION</div>
-          <h2>Initiate direct<br /><em>technical dialogue</em>.</h2>
-          <p>Available for select architectural consulting, systems design, embedded hardware prototyping, and advisory roles.</p>
+          <div class="eyebrow">CONTACT</div>
+          <h2>Say <em>hello</em>.</h2>
+          <p>If you run a B&amp;B or a small hotel and want to try Fidestay, email me. Same if you're building something nearby and want to compare notes. I read everything and I answer in Dutch or English.</p>
           
           <a href="mailto:hello@sjoerdgourley.com" class="direct-email-card">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
@@ -1543,32 +1376,37 @@
           </a>
         </div>
 
-        <form class="contact-form" id="contactForm" onsubmit="event.preventDefault(); alert('Message sent to Sjoerd Gourley. Thank you!');">
+        <!-- REPLACE YOUR_FORM_ID with a real Formspree (or Netlify Forms)
+             endpoint. Until you do, the form says so instead of pretending
+             the message was sent. -->
+        <form class="contact-form" id="contactForm" method="post"
+              action="https://formspree.io/f/YOUR_FORM_ID">
           <div class="form-grid">
             <div class="form-group">
-              <label for="cName">Your Name</label>
-              <input type="text" id="cName" class="form-input" placeholder="Sarah Connor" required />
+              <label for="cName">Your name</label>
+              <input type="text" id="cName" name="name" class="form-input" placeholder="Anna de Wit" required />
             </div>
             <div class="form-group">
-              <label for="cEmail">Email Address</label>
-              <input type="email" id="cEmail" class="form-input" placeholder="sarah@domain.com" required />
+              <label for="cEmail">Email</label>
+              <input type="email" id="cEmail" name="email" class="form-input" placeholder="anna@example.com" required />
             </div>
           </div>
           <div class="form-group">
-            <label for="cTopic">Project Focus</label>
-            <input type="text" id="cTopic" class="form-input" placeholder="Distributed telemetry or firmware design" required />
+            <label for="cTopic">Subject</label>
+            <input type="text" id="cTopic" name="subject" class="form-input" placeholder="Fidestay, a question, or just hello" required />
           </div>
           <div class="form-group">
             <label for="cMsg">Message</label>
-            <textarea id="cMsg" class="form-textarea" placeholder="Detail the objectives, technical stack, and target milestones..." required></textarea>
+            <textarea id="cMsg" name="message" class="form-textarea" placeholder="Tell me what you're working on." required></textarea>
           </div>
           <button type="submit" class="btn-submit">
-            Send Message
+            Send
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
               <line x1="7" y1="17" x2="17" y2="7" />
               <polyline points="7 7 17 7 17 17" />
             </svg>
           </button>
+          <p class="form-status" id="formStatus" role="status" aria-live="polite" hidden></p>
         </form>
       </div>
     </div>
@@ -1582,12 +1420,11 @@
         <span>SJOERD GOURLEY</span>
       </div>
       <div class="footer-copy">
-        &copy; <span id="year">2026</span> Sjoerd Gourley. All rights reserved.
+        &copy; <span id="year">2026</span> Sjoerd Gourley &middot; Built in Limburg.
       </div>
       <ul class="footer-links">
-        <li><a href="#hero">Overview</a></li>
-        <li><a href="#about">About</a></li>
         <li><a href="#work">Work</a></li>
+        <li><a href="#about">About</a></li>
         <li><a href="#channels">Channels</a></li>
         <li><a href="#contact">Contact</a></li>
       </ul>
@@ -1896,48 +1733,54 @@
       } // end if (!reduceMotion)
 
       // ============================================================
-      // STATS REVEAL + COUNT-UP OBSERVER
+      // CONTACT FORM
       // ============================================================
-      function fillCounters() {
-        document.querySelectorAll(".stat-num").forEach(function (el) {
-          var target = parseFloat(el.dataset.count);
-          var span = el.querySelector("span");
-          if (reduceMotion) {
-            // The number is the content, not the animation: show it outright.
-            span.textContent = target.toLocaleString();
+      // The form used to fire alert("Message sent") and throw the message
+      // away. It now either really posts, or says plainly that it cannot.
+      var form = document.getElementById("contactForm");
+      var status = document.getElementById("formStatus");
+      if (form && status) {
+        var EMAIL = "hello@sjoerdgourley.com";
+        var say = function (text, state) {
+          status.textContent = text;
+          status.hidden = false;
+          if (state) {
+            status.setAttribute("data-state", state);
+          } else {
+            status.removeAttribute("data-state");
+          }
+        };
+
+        form.addEventListener("submit", function (e) {
+          e.preventDefault();
+          var action = form.getAttribute("action") || "";
+
+          if (action.indexOf("YOUR_FORM_ID") !== -1) {
+            // Not wired up yet. Say so rather than fake a confirmation.
+            say("This form isn't connected yet, so nothing was sent. Email me at " + EMAIL + " instead.", "error");
             return;
           }
-          gsap.to(
-            { v: 0 },
-            {
-              v: target,
-              duration: 2,
-              ease: "power2.out",
-              onUpdate: function () {
-                span.textContent = Math.floor(this.targets()[0].v).toLocaleString();
-              }
-            }
-          );
-        });
-      }
 
-      if (reduceMotion) {
-        fillCounters();
-      } else {
-        gsap.from(".stats-panel", {
-          opacity: 0,
-          y: 50,
-          scale: 0.98,
-          duration: 1,
-          ease: "power3.out",
-          scrollTrigger: { trigger: ".stats-panel", start: "top 80%" }
-        });
+          var btn = form.querySelector(".btn-submit");
+          if (btn) btn.disabled = true;
+          say("Sending...");
 
-        ScrollTrigger.create({
-          trigger: ".stats-panel",
-          start: "top 75%",
-          onEnter: fillCounters,
-          once: true
+          fetch(action, {
+            method: "POST",
+            body: new FormData(form),
+            headers: { Accept: "application/json" }
+          })
+            .then(function (res) {
+              if (!res.ok) throw new Error(res.status);
+              form.reset();
+              say("Thanks. I'll get back to you.");
+            })
+            .catch(function () {
+              say("That didn't send. Email me at " + EMAIL + " and I'll pick it up there.", "error");
+            })
+            .then(function () {
+              if (btn) btn.disabled = false;
+            });
         });
       }
 
