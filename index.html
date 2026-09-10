@@ -848,6 +848,13 @@
       resize: vertical;
       min-height: 110px;
     }
+    .hp {
+      position: absolute;
+      left: -9999px;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+    }
     .form-status {
       margin-top: 16px;
       font-size: 14px;
@@ -1450,11 +1457,14 @@
           <p class="contact-aside">Run a B&amp;B or a small hotel? Fidestay is at <a href="https://fidestay.nl" target="_blank" rel="noopener noreferrer">fidestay.nl</a>.</p>
         </div>
 
-        <!-- REPLACE YOUR_FORM_ID with a real Formspree (or Netlify Forms)
-             endpoint. Until you do, the form says so instead of pretending
-             the message was sent. -->
-        <form class="contact-form" id="contactForm" method="post"
-              action="https://formspree.io/f/YOUR_FORM_ID">
+        <form class="contact-form" id="contactForm" method="post" action="/api/contact">
+          <!-- Honeypot. Off-screen rather than display:none, which some bots
+               skip. A human never focuses it; anything in it is a bot. -->
+          <div class="hp" aria-hidden="true">
+            <label for="cCompany">Company</label>
+            <input type="text" id="cCompany" name="company" tabindex="-1" autocomplete="off" />
+          </div>
+          <input type="hidden" name="ts" id="cTs" value="" />
           <div class="form-grid">
             <div class="form-group">
               <label for="cName">Your name</label>
@@ -1822,6 +1832,9 @@
       var status = document.getElementById("formStatus");
       if (form && status) {
         var EMAIL = "hello@sjoerdgourley.com";
+        var tsField = document.getElementById("cTs");
+        if (tsField) tsField.value = String(Date.now());
+
         var say = function (text, state) {
           status.textContent = text;
           status.hidden = false;
@@ -1834,26 +1847,29 @@
 
         form.addEventListener("submit", function (e) {
           e.preventDefault();
-          var action = form.getAttribute("action") || "";
-
-          if (action.indexOf("YOUR_FORM_ID") !== -1) {
-            // Not wired up yet. Say so rather than fake a confirmation.
-            say("This form isn't connected yet, so nothing was sent. Email me at " + EMAIL + " instead.", "error");
-            return;
-          }
-
           var btn = form.querySelector(".btn-submit");
+          var payload = {};
+          new FormData(form).forEach(function (v, k) { payload[k] = v; });
+
           if (btn) btn.disabled = true;
           say("Sending...");
 
-          fetch(action, {
+          fetch(form.getAttribute("action"), {
             method: "POST",
-            body: new FormData(form),
-            headers: { Accept: "application/json" }
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
           })
             .then(function (res) {
-              if (!res.ok) throw new Error(res.status);
+              return res.json().catch(function () { return {}; }).then(function (data) {
+                if (!res.ok || !data.ok) throw new Error(data.error || res.status);
+                return data;
+              });
+            })
+            .then(function (data) {
               form.reset();
+              if (tsField) tsField.value = String(Date.now());
+              // Stored counts as received even if the notification mail
+              // failed, so the confirmation is the same either way.
               say("Got it. I'll answer.");
             })
             .catch(function () {
