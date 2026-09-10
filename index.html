@@ -1008,6 +1008,21 @@
       }
     }
 
+    /* Section rhythm. The big gap under #work exists only so the pinned
+       intro can leave before the next heading arrives; on mobile nothing
+       pins, so it is dead space and gets cut right back. */
+    #work {
+      padding-top: 40px;
+      padding-bottom: 220px;
+    }
+    #channels {
+      padding-top: 120px;
+    }
+    #contact {
+      padding-top: 40px;
+      padding-bottom: 140px;
+    }
+
     /* Responsive */
     @media (max-width: 1024px) {
       .positioning-grid {
@@ -1032,6 +1047,77 @@
     @media (max-width: 768px) {
       .nav {
         padding: 16px 20px;
+      }
+      /* Wordmark plus CTA plus hamburger needs 328px of a 335px line: it wraps
+         on anything narrower than an iPhone and doubles the header height.
+         The drawer already carries an "Email me", so nothing is lost. */
+      .nav-actions .nav-cta {
+        display: none;
+      }
+      #work {
+        padding-bottom: 72px;
+      }
+      #channels {
+        padding-top: 72px;
+      }
+      #contact {
+        padding-bottom: 96px;
+      }
+      /* The drawer is the entire mobile navigation and its links were 21px
+         tall. Everything a thumb has to hit gets at least 44. */
+      .drawer-links a {
+        display: block;
+        padding: 12px 0;
+      }
+      .hamburger {
+        width: 44px;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: -10px;
+      }
+      .drawer-close {
+        width: 44px;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: -10px;
+      }
+
+      /* Footer: three loose left-aligned blobs became a proper block. Links
+         first in two columns with real tap targets, then a rule, then the
+         identity. */
+      .footer-inner {
+        gap: 0;
+      }
+      .footer-links {
+        order: -1;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0 24px;
+        width: 100%;
+        margin-bottom: 28px;
+      }
+      .footer-links a {
+        display: block;
+        padding: 11px 0;
+        font-size: 14px;
+      }
+      .footer-inner .logo {
+        width: 100%;
+        padding-top: 24px;
+        border-top: 1px solid var(--hairline);
+      }
+      .footer-copy {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        margin-top: 14px;
+      }
+      .footer-sep {
+        display: none;
       }
       .nav-links {
         display: none;
@@ -1070,7 +1156,9 @@
       }
       .cards-stack {
         gap: 24px;
-        padding-bottom: 20vh;
+        /* Nothing pins on mobile, so the deck needs no tail. 20vh here was
+           340px of nothing between the last card and the next heading. */
+        padding-bottom: 4vh;
       }
       .stack-card {
         top: calc(84px + var(--i) * 26px);
@@ -1267,7 +1355,7 @@
   <!-- ==========================================================================
        PROJECTS GRID
        ========================================================================== -->
-  <section class="section-spacing" id="work" style="padding-top: 40px; padding-bottom: 220px;">
+  <section class="section-spacing" id="work">
     <div class="container">
       <div class="work-layout">
         <div class="work-intro">
@@ -1366,7 +1454,7 @@
   <!-- ==========================================================================
        CHANNELS / SOCIALS
        ========================================================================== -->
-  <section class="section-spacing" id="channels" style="padding-top: 120px;">
+  <section class="section-spacing" id="channels">
     <div class="container">
       <div class="section-head">
         <div class="eyebrow">WHERE I POST</div>
@@ -1460,7 +1548,7 @@
   <!-- ==========================================================================
        CONTACT FORM
        ========================================================================== -->
-  <section class="section-spacing" id="contact" style="padding-top: 40px; padding-bottom: 140px;">
+  <section class="section-spacing" id="contact">
     <div class="container">
       <div class="contact-box">
         <div class="contact-left">
