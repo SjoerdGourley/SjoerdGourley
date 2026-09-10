@@ -93,21 +93,38 @@ Sjoerd is not "based in Limburg" — Limburg is Fidestay's launch market.
   line underneath. It is the only centred head on the page, on purpose.
 - The hero deck does not fan out below 768px — it caused horizontal scroll.
 
-## SEO baseline as of 2026-09-10
+## SEO status as of 2026-09-10
 
-Nothing has been done here yet. Current state, verified against the live site:
+Tooling: the `claude-seo` plugin (AgriciDaniel/claude-seo v2.3.0) is vendored
+**project-scoped** in `.claude/skills` + `.claude/agents`, with its own Python
+venv at `.claude/skills/seo/.venv`. The whole `.claude/` tree is gitignored, so
+a fresh clone has no `/seo` command until it is reinstalled. Run scripts with
+`./.claude/skills/seo/scripts/claude-seo run <script>.py`; `... doctor` reports
+runtime health.
 
-**Present:** `<title>`, `<meta name="description">`, `lang="en"`, one `<h1>`,
-four `<h2>`, three `<h3>`, descriptive `alt` on all four content images,
-`alt=""` on the seven decorative hero images (correct), `width`/`height` on
-every image, `loading="lazy"` below the fold, favicon set.
+**Was already right:** `<title>`, `<meta name="description">`, `lang="en"`, one
+`<h1>`, four `<h2>`, three `<h3>`, descriptive `alt` on the four content images,
+`alt=""` on the seven decorative hero images, `width`/`height` everywhere,
+`loading="lazy"` below the fold, favicon set, `www` 308s to apex.
 
-**Absent:** Open Graph and Twitter card tags, `<link rel="canonical">`,
-`robots.txt` (404), `sitemap.xml` (404), any JSON-LD — a `Person` /
-`ProfilePage` block is the obvious first one, with `sameAs` pointing at the
-four channels.
+**Added 2026-09-10:** `<link rel="canonical">` to the apex, `theme-color`, the
+full Open Graph + Twitter `summary_large_image` set, `robots.txt` (disallows
+`/api/` and the OG card), `sitemap.xml`, and a JSON-LD `@graph` with
+`ProfilePage` / `WebSite` / `Person` / `ImageObject`. The `Person` carries
+`sameAs` to the four channels — all four were HTTP-checked 200 before shipping.
 
-Watch out for: it is one page with no routes, so a sitemap is nearly trivial
-and a canonical matters mostly for the `www`/apex pair. There is no server-side
-rendering question — the HTML is fully static and complete before JavaScript
-runs, so crawlers see everything.
+`assets/og-image.jpg` (1200x630, 88 KB) is **generated**, not hand-made:
+`assets/og-card.html` is the source, rendered headless at 1200x630 with
+`device_scale_factor: 2` and downsampled. It is `noindex` and robots-disallowed
+so it never competes with the real page. Change the card, re-render, re-encode —
+do not edit the JPEG.
+
+Measured, not guessed: the LCP element is the `builds` text span (~176 ms local,
+CLS 0.004), so **no image needs `fetchpriority="high"`**. Do not add one to the
+hero cards on a hunch; re-measure first. `agent_ux_check` scores 96/100, the one
+deduction being an input without a `label[for]` in the contact form.
+
+**Still open:** verify the live OG render in a real scraper (X / LinkedIn /
+Slack unfurl) after deploy; no Search Console property is connected, so there is
+no impression data to act on; PageSpeed Insights needs an API key to avoid the
+shared-quota 429.

@@ -7,3 +7,6 @@ coverage/
 .env*
 !.env.example
 .vercel
+
+# Vendored Claude Code tooling (claude-seo plugin + venv) — not part of the site
+.claude/
