@@ -390,8 +390,17 @@
       pointer-events: auto;
     }
 
-    .card {
+    /* .card-fan is positioned and carries the scroll fan-out; .card is the
+       visual frame and carries the drift. Neither writes the other's
+       properties, and because the wrapper is on the OUTSIDE the whole card
+       moves rather than the photograph sliding inside a still frame. */
+    .card-fan {
       position: absolute;
+    }
+    .card {
+      position: relative;
+      width: 100%;
+      height: 100%;
       border-radius: var(--radius-card);
       overflow: hidden;
       background: var(--surface-1);
@@ -418,15 +427,6 @@
       pointer-events: none;
       border-radius: inherit;
       z-index: 2;
-    }
-    /* The deck fans out on scroll and drifts on a loop. Two animations must
-       never write the same property of the same element, so the fan-out stays
-       on .card and the drift moves in here. */
-    .card-float {
-      position: relative;
-      z-index: 1;
-      width: 100%;
-      height: 100%;
     }
     .card img {
       width: 100%;
@@ -1163,29 +1163,29 @@
     <!-- Scattered cards row across center -->
     <div class="cards-row" id="cardsRow">
       <!-- 8 project cards with data-rot and data-depth from reference -->
-      <div class="card card-1" data-rot="-9" data-depth="14">
-        <div class="card-float"><img src="assets/hero/occupancy.jpg" width="600" height="800" alt="" /></div>
+      <div class="card-fan card-1">
+        <div class="card" data-rot="-9" data-depth="14"><img src="assets/hero/occupancy.jpg" width="600" height="800" alt="" /></div>
       </div>
-      <div class="card card-2" data-rot="-5" data-depth="10">
-        <div class="card-float"><img src="assets/hero/sources.jpg" width="600" height="800" alt="" /></div>
+      <div class="card-fan card-2">
+        <div class="card" data-rot="-5" data-depth="10"><img src="assets/hero/sources.jpg" width="600" height="800" alt="" /></div>
       </div>
-      <div class="card card-3" data-rot="-2" data-depth="8">
-        <div class="card-float"><img src="assets/hero/calendar.jpg" width="600" height="800" alt="" /></div>
+      <div class="card-fan card-3">
+        <div class="card" data-rot="-2" data-depth="8"><img src="assets/hero/calendar.jpg" width="600" height="800" alt="" /></div>
       </div>
-      <div class="card card-4" data-rot="3" data-depth="12">
-        <div class="card-float"><img src="assets/hero/revenue.jpg" width="600" height="800" alt="" /></div>
+      <div class="card-fan card-4">
+        <div class="card" data-rot="3" data-depth="12"><img src="assets/hero/revenue.jpg" width="600" height="800" alt="" /></div>
       </div>
-      <div class="card card-5" data-rot="0" data-depth="6">
-        <div class="card-float"><img src="assets/sjoerd-gourley.jpg" width="675" height="900" alt="Sjoerd Gourley" /></div>
+      <div class="card-fan card-5">
+        <div class="card" data-rot="0" data-depth="6"><img src="assets/sjoerd-gourley.jpg" width="675" height="900" alt="Sjoerd Gourley" /></div>
       </div>
-      <div class="card card-6" data-rot="4" data-depth="11">
-        <div class="card-float"><img src="assets/hero/bookings.jpg" width="600" height="800" alt="" /></div>
+      <div class="card-fan card-6">
+        <div class="card" data-rot="4" data-depth="11"><img src="assets/hero/bookings.jpg" width="600" height="800" alt="" /></div>
       </div>
-      <div class="card card-7" data-rot="7" data-depth="9">
-        <div class="card-float"><img src="assets/hero/per-room.jpg" width="600" height="800" alt="" /></div>
+      <div class="card-fan card-7">
+        <div class="card" data-rot="7" data-depth="9"><img src="assets/hero/per-room.jpg" width="600" height="800" alt="" /></div>
       </div>
-      <div class="card card-8" data-rot="-4" data-depth="13">
-        <div class="card-float"><img src="assets/hero/commission.jpg" width="600" height="800" alt="" /></div>
+      <div class="card-fan card-8">
+        <div class="card" data-rot="-4" data-depth="13"><img src="assets/hero/commission.jpg" width="600" height="800" alt="" /></div>
       </div>
     </div>
 
@@ -1677,9 +1677,9 @@
       // ============================================================
       document.querySelectorAll(".card").forEach(function (card, i) {
         var rot = parseFloat(card.dataset.restRot) || 0;
-        gsap.to(card.querySelector(".card-float"), {
+        gsap.to(card, {
           y: "+=" + (8 + (i % 3) * 5),
-          rotation: i % 2 === 0 ? 1.5 : -1.5,
+          rotation: rot + (i % 2 === 0 ? 1.5 : -1.5),
           duration: 3 + (i % 4) * 0.5,
           delay: 1.8 + i * 0.1,
           ease: "sine.inOut",
@@ -1726,11 +1726,11 @@
           var r = card.getBoundingClientRect();
           var px = (e.clientX - r.left) / r.width - 0.5;
           var py = (e.clientY - r.top) / r.height - 0.5;
+          card.parentElement.style.zIndex = "20";
           gsap.to(card, {
             rotateX: -py * 16,
             rotateY: px * 16,
             scale: 1.12,
-            zIndex: 20,
             duration: 0.4,
             ease: "power2.out",
             transformPerspective: 700,
@@ -1738,11 +1738,11 @@
           });
         });
         card.addEventListener("mouseleave", function () {
+          card.parentElement.style.zIndex = "";
           gsap.to(card, {
             rotateX: 0,
             rotateY: 0,
             scale: 1,
-            zIndex: card.style.zIndex || "",
             duration: 0.8,
             ease: "elastic.out(1, 0.6)",
             overwrite: "auto"
@@ -1791,7 +1791,7 @@
           document.querySelectorAll(".card").forEach(function (card, i) {
             var m = moves[i] || { x: 0, y: 0, rot: 0 };
             var rest = parseFloat(card.dataset.restRot) || 0;
-            gsap.set(card, {
+            gsap.set(card.parentElement, {
               x: m.x * p,
               y: m.y * p,
               rotation: rest + m.rot * p
