@@ -390,7 +390,11 @@
       position: absolute;
       left: 0;
       right: 0;
-      top: 50%;
+      /* Lifted from 50%: the pill and the subline sat 68px inside the deck.
+         The hero centres its flex column, so raising the subline's margin only
+         moves it half as far and pushes the text under the fold on a 800px
+         laptop. Lifting the deck is the lever that works at every height. */
+      top: 38%;
       height: 320px;
       z-index: 3;
       pointer-events: none;
