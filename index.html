@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sjoerd Gourley — Personal Brand Hub</title>
-  <meta name="description" content="Personal brand hub for Sjoerd Gourley — software architect, systems engineer, and builder." />
+  <title>Sjoerd Gourley | Nobody builds the billing</title>
+  <meta name="description" content="I help freelancers and small agencies build past the design into accounts, billing and sync, and sell what they build. Netflix and Airbnb rebuilt on camera." />
 
   <!-- Fonts: Inter & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -710,6 +710,13 @@
       font-size: 16px;
       font-weight: 700;
     }
+    .channel-note {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid var(--hairline);
+      font-size: 12px;
+      color: var(--ink-subtle);
+    }
     .channel-handle {
       font-family: var(--font-mono);
       font-size: 11px;
@@ -786,6 +793,15 @@
     }
     .direct-email-card svg {
       color: var(--accent-text);
+    }
+
+    .contact-aside {
+      margin-top: 18px;
+      font-size: 12px;
+      color: var(--ink-tertiary);
+    }
+    .contact-aside a {
+      color: var(--ink-subtle);
     }
 
     .contact-form {
@@ -1065,8 +1081,8 @@
       <span>SJOERD GOURLEY</span>
     </a>
     <ul class="nav-links">
+      <li><a href="#about">What I do</a></li>
       <li><a href="#work">Work</a></li>
-      <li><a href="#about">About</a></li>
       <li><a href="#channels">Channels</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
@@ -1099,8 +1115,8 @@
         <button class="drawer-close" id="drawerClose">&times;</button>
       </div>
       <ul class="drawer-links">
+        <li><a href="#about" class="drawer-link">What I do</a></li>
         <li><a href="#work" class="drawer-link">Work</a></li>
-        <li><a href="#about" class="drawer-link">About</a></li>
         <li><a href="#channels" class="drawer-link">Channels</a></li>
         <li><a href="#contact" class="drawer-link">Contact</a></li>
       </ul>
@@ -1160,7 +1176,7 @@
     <!-- Subline -->
     <div class="subline" id="subline">
       <a href="#work" class="arrow-pill">
-        See what I'm building
+        See the work
         <span class="ar">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
             <line x1="7" y1="17" x2="17" y2="7" />
@@ -1168,7 +1184,7 @@
           </svg>
         </span>
       </a>
-      <div class="subline-text">I'm building Fidestay, a booking platform and channel manager for B&amp;B and small-hotel owners in the Netherlands.</div>
+      <div class="subline-text">I help freelancers and small agencies build past the design into accounts, billing and sync, and sell what they build. That means rebuilding platforms like Netflix and Airbnb on camera, and closing real clients in public.</div>
     </div>
   </section>
 
@@ -1178,9 +1194,9 @@
   <section class="section-spacing" id="about">
     <div class="container">
       <div class="section-head">
-        <div class="eyebrow">WHAT I DO</div>
-        <h2>Three things, and I'd rather do them <em>properly</em> than do six.</h2>
-        <p>One product I'm building, one channel I'm starting, and one skill I'm learning on purpose. That's the whole list.</p>
+        <div class="eyebrow">THE PART UNDERNEATH</div>
+        <h2>Everyone clones the Netflix interface. <em>Nobody</em> builds the billing behind it.</h2>
+        <p>Accounts, billing, rights and sync. That is where most builds stall, and it is the entire subject of the channel. Fidestay is the running proof: a real marketplace with availability sync and real money moving through it.</p>
       </div>
 
       <div class="positioning-grid">
@@ -1193,8 +1209,8 @@
               <polyline points="2 12 12 17 22 12" />
             </svg>
           </div>
-          <h3>Fidestay</h3>
-          <p>A booking platform for B&amp;B and small-hotel owners, plus the channel manager that keeps their rooms in sync everywhere else. Dutch market first, Limburg first of all.</p>
+          <h3>The layer nobody films</h3>
+          <p>Accounts, subscriptions, access that drifts out of sync with payment, payouts to two sides at once. The design tutorials end right before this, and this is where the money and the trust actually live.</p>
         </div>
 
         <!-- Card 2 -->
@@ -1213,8 +1229,8 @@
               <line x1="1" y1="14" x2="4" y2="14" />
             </svg>
           </div>
-          <h3>A channel and a community</h3>
-          <p>I rebuild platforms like Netflix and Airbnb on camera, and show the accounts, billing and sync that the design tutorials stop before. The paid community is where that goes deeper.</p>
+          <h3>Fidestay, the worked example</h3>
+          <p>A live marketplace and channel manager for B&amp;B and small hotel owners in the Netherlands, launching in Limburg. Listings, availability sync with the platforms hosts already use, and payments. Live, taking bookings, with the first host on it.</p>
         </div>
 
         <!-- Card 3 -->
@@ -1225,8 +1241,8 @@
               <polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02" />
             </svg>
           </div>
-          <h3>Learning to trade</h3>
-          <p>I'm learning to trade properly, working toward prop-firm capital. It's a skill I'm building, not a service I sell, and I'll say so when there's something to show.</p>
+          <h3>Selling is the other half</h3>
+          <p>Before the code I ran my own sales office and trained more than a hundred people to sell. Most builders can make the thing and then wait for someone to refer them. I would rather you could go and get the work yourself.</p>
         </div>
       </div>
     </div>
@@ -1242,7 +1258,7 @@
           <div class="section-head">
             <div class="eyebrow">WHAT I'M BUILDING</div>
             <h2>Fewer things, <em>further along</em>.</h2>
-            <p>Most of my time goes into one product. The rest is here too, at whatever stage it's actually at.</p>
+            <p>Four of them, at whatever stage they are honestly at. Where something has not shipped, it says so.</p>
           </div>
         </div>
 
@@ -1253,13 +1269,12 @@
               <div class="project-media"></div>
               <div class="project-body">
                 <div>
-                  <div class="project-title">Fidestay Marketplace</div>
-                  <p class="project-desc">Where guests find and book B&amp;Bs and small hotels in Limburg, and where hosts get a listing they actually control.</p>
+                  <div class="project-title">The YouTube channel</div>
+                  <p class="project-desc">One big platform at a time, rebuilt on camera all the way down to the part that takes the money. English, long form. Nothing published yet, and it will say here when the first one is.</p>
                 </div>
                 <div class="project-tags">
-              <span class="tag">Marketplace</span>
-              <span class="tag">Netherlands</span>
-              <span class="tag">Limburg</span>
+                  <span class="tag">YouTube</span>
+                  <span class="tag">English</span>
                 </div>
               </div>
             </div>
@@ -1271,12 +1286,12 @@
               <div class="project-media"></div>
               <div class="project-body">
                 <div>
-                  <div class="project-title">Fidestay Channel Manager</div>
-                  <p class="project-desc">One calendar, every platform. Hosts update availability once instead of chasing four dashboards and hoping nothing double-books.</p>
+                  <div class="project-title">Fidestay</div>
+                  <p class="project-desc">A booking marketplace plus the channel manager behind it, for B&amp;B and small hotel owners in the Netherlands, launching in Limburg. Hosts publish once and their availability stays right everywhere else. Live, taking bookings, with the first host on it.</p>
                 </div>
                 <div class="project-tags">
-              <span class="tag">Channel manager</span>
-              <span class="tag">Availability sync</span>
+                  <span class="tag">Live product</span>
+                  <span class="tag">Availability sync</span>
                 </div>
               </div>
             </div>
@@ -1288,13 +1303,12 @@
               <div class="project-media"></div>
               <div class="project-body">
                 <div>
-                  <div class="project-title">The YouTube channel</div>
-                  <p class="project-desc">Everyone clones the Netflix interface. Nobody builds the billing behind it. That's the channel.</p>
+                  <div class="project-title">The community</div>
+                  <p class="project-desc">A paid place next to the channel for people who want to go further than a video can take them. Not open yet, and it will say here when it is.</p>
                 </div>
                 <div class="project-tags">
-              <span class="tag">YouTube</span>
-              <span class="tag">English</span>
-              <span class="tag">Teardowns</span>
+                  <span class="tag">Community</span>
+                  <span class="tag">Not open yet</span>
                 </div>
               </div>
             </div>
@@ -1306,12 +1320,12 @@
               <div class="project-media"></div>
               <div class="project-body">
                 <div>
-                  <div class="project-title">The community</div>
-                  <p class="project-desc">A paid community alongside the channel, for people who want to go further than a video can take them.</p>
+                  <div class="project-title">Client builds</div>
+                  <p class="project-desc">I build the hard end of the web, the platforms and the payment systems underneath them, and everything simpler on the way down.</p>
                 </div>
                 <div class="project-tags">
-              <span class="tag">Community</span>
-              <span class="tag">Paid</span>
+                  <span class="tag">Client work</span>
+                  <span class="tag">Web and platform</span>
                 </div>
               </div>
             </div>
@@ -1329,7 +1343,7 @@
       <div class="section-head">
         <div class="eyebrow">WHERE I POST</div>
         <h2>Same person, <em>four places</em>.</h2>
-        <p>The channel is where the long stuff will go. The rest is work in progress, half-finished screens, and whatever I'm figuring out that week.</p>
+        <p>Each one has a job. YouTube gets the long builds, Instagram gets the selling half, X gets the working notes, and GitHub gets the code.</p>
       </div>
 
       <div class="channels-grid">
@@ -1348,6 +1362,7 @@
           <div>
             <div class="channel-name">YouTube</div>
             <div class="channel-handle">@sjoerdgourley</div>
+            <div class="channel-note">The long builds</div>
           </div>
         </a>
 
@@ -1365,7 +1380,8 @@
           </div>
           <div>
             <div class="channel-name">X</div>
-            <div class="channel-handle">@sjoerdgourley</div>
+            <div class="channel-handle">@SjoerdGourley</div>
+            <div class="channel-note">Working notes</div>
           </div>
         </a>
 
@@ -1384,6 +1400,7 @@
           <div>
             <div class="channel-name">Instagram</div>
             <div class="channel-handle">@sjoerdgourley</div>
+            <div class="channel-note">Selling the work</div>
           </div>
         </a>
 
@@ -1402,6 +1419,7 @@
           <div>
             <div class="channel-name">GitHub</div>
             <div class="channel-handle">sjoerdgourley</div>
+            <div class="channel-note">The code</div>
           </div>
         </a>
 
@@ -1419,13 +1437,14 @@
       <div class="contact-box">
         <div class="contact-left">
           <div class="eyebrow">CONTACT</div>
-          <h2>Say <em>hello</em>.</h2>
-          <p>If you run a B&amp;B or a small hotel and want to try Fidestay, email me. Same if you're building something nearby and want to compare notes. I read everything and I answer in Dutch or English.</p>
+          <h2>Tell me what you're <em>stuck on</em>.</h2>
+          <p>Two good reasons to write. You are past the design and stuck underneath it, on the accounts or the payments or the sync, and you want a second pair of eyes. Or you want something built and you would rather hire someone whose work you have already watched. I read everything and I answer in English or Dutch.</p>
           
           <a href="mailto:hello@sjoerdgourley.com" class="direct-email-card">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
             hello@sjoerdgourley.com
           </a>
+          <p class="contact-aside">Run a B&amp;B or a small hotel? Fidestay is at <a href="https://fidestay.nl" target="_blank" rel="noopener noreferrer">fidestay.nl</a>.</p>
         </div>
 
         <!-- REPLACE YOUR_FORM_ID with a real Formspree (or Netlify Forms)
@@ -1436,20 +1455,20 @@
           <div class="form-grid">
             <div class="form-group">
               <label for="cName">Your name</label>
-              <input type="text" id="cName" name="name" class="form-input" placeholder="Anna de Wit" required />
+              <input type="text" id="cName" name="name" class="form-input" placeholder="Alex Rivera" required />
             </div>
             <div class="form-group">
               <label for="cEmail">Email</label>
-              <input type="email" id="cEmail" name="email" class="form-input" placeholder="anna@example.com" required />
+              <input type="email" id="cEmail" name="email" class="form-input" placeholder="alex@studio.com" required />
             </div>
           </div>
           <div class="form-group">
-            <label for="cTopic">Subject</label>
-            <input type="text" id="cTopic" name="subject" class="form-input" placeholder="Fidestay, a question, or just hello" required />
+            <label for="cTopic">What it's about</label>
+            <input type="text" id="cTopic" name="subject" class="form-input" placeholder="Stripe payouts are eating my week" required />
           </div>
           <div class="form-group">
             <label for="cMsg">Message</label>
-            <textarea id="cMsg" name="message" class="form-textarea" placeholder="Tell me what you're working on." required></textarea>
+            <textarea id="cMsg" name="message" class="form-textarea" placeholder="Tell me what you're building and where it stalled." required></textarea>
           </div>
           <button type="submit" class="btn-submit">
             Send
@@ -1482,8 +1501,8 @@
         </span>
       </div>
       <ul class="footer-links">
+        <li><a href="#about">What I do</a></li>
         <li><a href="#work">Work</a></li>
-        <li><a href="#about">About</a></li>
         <li><a href="#channels">Channels</a></li>
         <li><a href="#contact">Contact</a></li>
       </ul>
@@ -1832,7 +1851,7 @@
             .then(function (res) {
               if (!res.ok) throw new Error(res.status);
               form.reset();
-              say("Thanks. I'll get back to you.");
+              say("Got it. I'll answer.");
             })
             .catch(function () {
               say("That didn't send. Email me at " + EMAIL + " and I'll pick it up there.", "error");
