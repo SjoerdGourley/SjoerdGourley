@@ -10,3 +10,6 @@ coverage/
 
 # Vendored Claude Code tooling (claude-seo plugin + venv) — not part of the site
 .claude/
+
+# Local project brief for Claude sessions. Vercel serves every tracked file.
+CLAUDE.md
