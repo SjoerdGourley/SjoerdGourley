@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,500;0,800;1,900&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --canvas:#222222; --surface-1:#282828; --hairline:#464646;
+    --ink:#ffffff; --accent-fill:#1c5d99; --accent-text:#639fab;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{width:1280px;height:420px;background:transparent;overflow:hidden}
+  .banner{
+    position:relative; width:1280px; height:420px; overflow:hidden;
+    border-radius:20px; background:var(--canvas);
+    font-family:'Inter',system-ui,sans-serif; color:var(--ink);
+  }
+  .glow{
+    position:absolute; width:900px; height:900px; border-radius:50%;
+    background:radial-gradient(circle, rgba(28,93,153,.22) 0%, rgba(28,93,153,0) 60%);
+    top:-520px; left:190px;
+  }
+  .eyebrow{
+    position:absolute; top:32px; left:0; right:0;
+    display:flex; justify-content:center; align-items:center; gap:10px;
+    font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:500;
+    letter-spacing:.28em; text-transform:uppercase; color:var(--accent-text);
+  }
+  .eyebrow::before{
+    content:""; width:6px; height:6px; border-radius:50%;
+    background:var(--accent-fill); box-shadow:0 0 8px var(--accent-text);
+  }
+  .name{
+    position:absolute; top:58px; left:0; right:0; text-align:center;
+    font-size:76px; font-weight:800; letter-spacing:-.04em; line-height:1;
+    z-index:4;
+  }
+  .ghost{
+    position:absolute; top:118px; left:0; right:0; text-align:center;
+    font-size:300px; font-style:italic; font-weight:900; letter-spacing:-.05em;
+    line-height:.85; color:#2b2b2b; text-shadow:0 4px 20px rgba(0,0,0,.4);
+    white-space:nowrap; z-index:1;
+  }
+  .card{
+    position:absolute; border-radius:16px; overflow:hidden;
+    background:var(--surface-1); border:1px solid var(--hairline); z-index:3;
+    box-shadow:0 30px 50px -16px rgba(0,0,0,.7), 0 14px 26px -8px rgba(0,0,0,.45),
+      inset 0 1px 0 rgba(255,255,255,.08);
+  }
+  .card::before{
+    content:""; position:absolute; inset:0; z-index:2; border-radius:inherit;
+    background:linear-gradient(155deg, rgba(255,255,255,.12) 0%, transparent 35%,
+      transparent 70%, rgba(0,0,0,.4) 100%);
+  }
+  .card img{display:block; width:100%; height:100%; object-fit:cover; filter:saturate(.85) contrast(1.05)}
+  .c1{width:104px; height:144px; left:5%;    top:212px; transform:rotate(-9deg); z-index:1}
+  .c2{width:128px; height:176px; left:13%;   top:222px; transform:rotate(-5deg); z-index:2}
+  .c3{width:160px; height:216px; left:23%;   top:196px; transform:rotate(-2deg); z-index:4}
+  .c4{width:120px; height:160px; left:36.5%; top:240px; transform:rotate(3deg)}
+  .c5{width:184px; height:246px; left:44.6%; top:176px; z-index:5}
+  .c6{width:128px; height:172px; left:59.5%; top:230px; transform:rotate(4deg)}
+  .c7{width:140px; height:192px; left:69.5%; top:206px; transform:rotate(7deg); z-index:4}
+  .c8{width:104px; height:140px; left:84%;   top:226px; transform:rotate(-4deg); z-index:2}
+</style></head>
+<body>
+  <div class="banner">
+    <div class="glow"></div>
+    <div class="eyebrow">The part underneath</div>
+    <div class="name">Sjoerd Gourley.</div>
+    <div class="ghost">builds</div>
+    <div class="card c1"><img src="../assets/hero/occupancy.jpg" alt="" /></div>
+    <div class="card c2"><img src="../assets/hero/sources.jpg" alt="" /></div>
+    <div class="card c3"><img src="../assets/hero/calendar.jpg" alt="" /></div>
+    <div class="card c4"><img src="../assets/hero/revenue.jpg" alt="" /></div>
+    <div class="card c5"><img src="../assets/sjoerd-gourley.jpg" alt="" /></div>
+    <div class="card c6"><img src="../assets/hero/bookings.jpg" alt="" /></div>
+    <div class="card c7"><img src="../assets/hero/per-room.jpg" alt="" /></div>
+    <div class="card c8"><img src="../assets/hero/commission.jpg" alt="" /></div>
+  </div>
+</body></html>
