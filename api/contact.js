@@ -1,37 +1,14 @@
-/**
- * POST /api/contact
- *
- * Runs on Vercel's Node runtime. Deliberately dependency-free: the site is a
- * single static index.html with no package.json, and a contact form is not a
- * reason to introduce a build step. Both Resend and Supabase are called over
- * plain HTTPS with fetch.
- *
- * Order matters. The message is stored first and mailed second, so a Resend
- * outage loses a notification but never the message itself. `delivered`
- * records which of the two happened.
- *
- * Secrets live in Vercel's environment, never in this repo:
- *   RESEND_API_KEY, SUPABASE_SERVICE_ROLE_KEY
- */
+// POST /api/contact: store in Supabase, then mail via Resend
 
 const SUPABASE_URL = 'https://ezadbsekqvfzribcchek.supabase.co';
 const TO = 'hello@sjoerdgourley.com';
 const FROM = 'sjoerdgourley.com <noreply@sjoerdgourley.com>';
-// The confirmation goes out as hello@ rather than noreply@: it invites a reply,
-// and a From nobody can answer would contradict that in the same breath.
 const FROM_REPLY = 'Sjoerd Gourley <hello@sjoerdgourley.com>';
 
-// A form that mails an address the visitor types is usable to send unsolicited
-// post from this domain. These caps gate the confirmation only; the
-// notification to Sjoerd always goes out.
-// Per address is the cap that protects a person from being mailed repeatedly.
-// Per network is the blunter one, and it has to stay loose: an office, a cafe
-// or a mobile carrier puts many unrelated people behind one address, and three
-// an hour would silently punish the third of them.
+// Caps on the confirmation mail
 const CONFIRM_PER_IP_PER_HOUR = 10;
 const CONFIRM_PER_EMAIL_PER_DAY = 2;
 
-/** Bots fill every field they can see and they fill them instantly. */
 const MIN_FILL_MS = 2000;
 const LIMITS = { name: 120, email: 200, subject: 200, message: 5000 };
 
@@ -39,7 +16,7 @@ const esc = (v) =>
   String(v).replace(/[&<>"']/g, (c) =>
     ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
-/** Never store a raw IP: it is personal data and a salted hash triages spam just as well. */
+// Salted SHA-256 prefix of the IP
 async function hashIp(ip, salt) {
   if (!ip) return null;
   const data = new TextEncoder().encode(`${salt}:${ip}`);
@@ -50,14 +27,7 @@ async function hashIp(ip, salt) {
     .slice(0, 32);
 }
 
-/**
- * The notification, in the site's own palette.
- *
- * Tables and inline styles throughout: mail clients routinely drop <style>
- * blocks, flexbox and grid, and none of them understand CSS custom properties,
- * so the tokens are written out literally. No webfont either -- a system stack
- * is what actually renders, and Inter would silently fall back anyway.
- */
+// Mail layout in the site palette
 function emailShell(rowsHtml) {
   const CANVAS = '#222222';
   const SURFACE = '#282828';
@@ -89,7 +59,7 @@ function emailShell(rowsHtml) {
 </body></html>`;
 }
 
-/** What lands in Sjoerd's inbox. */
+// Notification to hello@
 const notifyHtml = (m) =>
   emailShell(({ INK, MUTED, SUBTLE, TERTIARY, ACCENT, FONT, rule }) => `
     <tr><td style="padding:28px 28px 0;font-family:${FONT};font-size:12px;font-weight:600;letter-spacing:0.28em;text-transform:uppercase;color:${SUBTLE};">
@@ -115,7 +85,7 @@ const notifyHtml = (m) =>
       message and it reaches ${esc(m.name)}.
     </td></tr>`);
 
-/** What lands in the sender's inbox. One per submission. */
+// Confirmation to the sender
 const confirmHtml = (m) =>
   emailShell(({ INK, MUTED, SUBTLE, TERTIARY, FONT, rule }) => `
     <tr><td style="padding:28px 28px 0;font-family:${FONT};font-size:12px;font-weight:600;letter-spacing:0.28em;text-transform:uppercase;color:${SUBTLE};">
@@ -140,14 +110,9 @@ const confirmHtml = (m) =>
       Forgot something? Reply to this email and it lands in the same place.
     </td></tr>`);
 
-/**
- * How many confirmations this address and this network already triggered.
- * One request, counted in JS. The row just inserted is excluded.
- */
+// Confirmations already sent to this address and network
 async function recentConfirms(serviceKey, email, ipHash, excludeId) {
   const since = new Date(Date.now() - 24 * 3600 * 1000).toISOString();
-  // Count confirmations actually sent, not submissions. Counting submissions
-  // made the limit self-reinforcing: a suppressed attempt still incremented it.
   const filters = [`created_at=gte.${since}`, 'confirmed=eq.true',
                    'select=email,ip_hash,created_at'];
   if (excludeId) filters.push(`id=neq.${excludeId}`);
@@ -168,7 +133,6 @@ async function recentConfirms(serviceKey, email, ipHash, excludeId) {
         : 0,
     };
   } catch {
-    // Unknown means unknown: do not let a failed lookup open the gate.
     return { perEmail: Infinity, perIp: Infinity };
   }
 }
@@ -182,8 +146,6 @@ module.exports = async (req, res) => {
   const body = typeof req.body === 'string' ? safeParse(req.body) : req.body || {};
   const { name, email, subject, message, company, ts } = body;
 
-  // Honeypot. A real browser never sees this field, so anything in it is a bot.
-  // Answer 200 so the bot records a success and does not retry with variations.
   if (company) return res.status(200).json({ ok: true });
 
   const elapsed = Number(ts) ? Date.now() - Number(ts) : Infinity;
@@ -244,7 +206,6 @@ module.exports = async (req, res) => {
   }
 
   if (!resendKey) {
-    // Stored but not announced. Better than pretending it was sent.
     return res.status(rowId ? 200 : 500).json({ ok: Boolean(rowId), stored: Boolean(rowId) });
   }
 
@@ -279,10 +240,6 @@ module.exports = async (req, res) => {
     console.error('resend threw', err && err.message);
   }
 
-  // Receipt for the sender, only once the notification actually went out:
-  // confirming receipt of something Sjoerd never got would be a lie. Capped,
-  // because the address comes from whoever filled the form and this is the one
-  // place the site mails a stranger on request.
   let confirmed = false;
   if (delivered && serviceKey) {
     const seen = await recentConfirms(serviceKey, record.email, record.ip_hash, rowId);
@@ -324,10 +281,6 @@ module.exports = async (req, res) => {
     }
   }
 
-  // One write for both flags, and it must be awaited: Vercel freezes the
-  // process the moment the response is sent, so a fire-and-forget fetch here
-  // never lands. confirmed is what the next request's rate limit reads, so
-  // losing it would let the cap drift open.
   if (rowId && serviceKey && (delivered || confirmed)) {
     try {
       await fetch(`${SUPABASE_URL}/rest/v1/contact_messages?id=eq.${rowId}`, {

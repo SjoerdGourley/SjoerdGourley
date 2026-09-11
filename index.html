@@ -9,11 +9,10 @@
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
   <meta name="description" content="I help freelancers and small agencies build past the design into accounts, billing and sync, and sell what they build. Netflix and Airbnb rebuilt on camera." />
 
-  <!-- Canonical: www 308s to apex, so the apex URL is the one address. -->
   <link rel="canonical" href="https://sjoerdgourley.com/" />
   <meta name="theme-color" content="#222222" />
 
-  <!-- Open Graph. og-image.jpg is generated from assets/og-card.html; see CLAUDE.md. -->
+  <!-- OPEN GRAPH -->
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Sjoerd Gourley" />
   <meta property="og:locale" content="en_US" />
@@ -96,15 +95,13 @@
   }
   </script>
 
-  <!-- Fonts: Inter & JetBrains Mono -->
+  <!-- FONTS -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
 
   <style>
-    /* ==========================================================================
-       1. DESIGN SYSTEM TOKENS (PROMPT 1 SPECIFICATION)
-       ========================================================================== */
+    /* DESIGN TOKENS */
     :root {
       --canvas: #222222;
       --surface-1: #282828;
@@ -134,9 +131,7 @@
       box-sizing: border-box;
     }
 
-    /* Priority 1 (Accessibility): every operable control needs a visible
-       focus indicator. The browser default ring is near-invisible on this
-       canvas, and only .nav-cta and the form fields defined their own. */
+    /* Focus ring */
     a:focus-visible,
     button:focus-visible,
     input:focus-visible,
@@ -157,8 +152,6 @@
       background-color: var(--canvas);
       color: var(--ink);
       font-family: var(--font-sans);
-      /* `clip` (not `hidden`) — `hidden` makes body a scroll container and
-         breaks `position: sticky` on the projects deck. */
       overflow-x: clip;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
@@ -219,9 +212,7 @@
       max-width: 580px;
     }
 
-    /* ==========================================================================
-       2. STICKY TOP NAV
-       ========================================================================== */
+    /* NAV */
     .nav {
       position: fixed;
       top: 0;
@@ -355,10 +346,6 @@
       transition: opacity 0.3s ease;
       display: flex;
       justify-content: flex-end;
-      /* The closed panel sits at translateX(100%), and a fixed overlay is not
-         contained by body's overflow-x: clip. Clipping here guarantees the
-         off-screen panel can never add to the page width. Defensive: not a
-         bug observed on this page. */
       overflow: hidden;
     }
     .mobile-drawer.open {
@@ -408,9 +395,7 @@
       text-decoration: none;
     }
 
-    /* ==========================================================================
-       3. HERO SECTION (REFERENCE MECHANICS + PROMPT 1 BRANDING)
-       ========================================================================== */
+    /* HERO */
     .hero {
       position: relative;
       min-height: 100vh;
@@ -444,14 +429,7 @@
       transform: translateY(105%);
     }
 
-    /* Ghost word "builds" scaled behind the cards.
-       The deck covered the lower two thirds of the word, so it gets an extra
-       lift on top of the measured -24px. That lift has to scale the way the
-       word does (font-size is 22vw until it clamps) -- a flat 60px is right at
-       1440 but overshoots at 900, where it pushes "builds" clear above the
-       name and turns the name from a cap on the word into a line inside it.
-       .subline puts the same amount back below, so the deck, the pill and the
-       name do not move: only the ghost does. */
+    /* Ghost word */
     .big-results-wrap {
       position: relative;
       width: 100%;
@@ -468,7 +446,7 @@
       font-size: clamp(120px, 22vw, 320px);
       letter-spacing: -0.05em;
       line-height: 0.85;
-      color: #2b2b2b; /* Subtle dark ghost silhouette */
+      color: #2b2b2b;
       text-align: center;
       white-space: nowrap;
       z-index: 1;
@@ -479,15 +457,11 @@
       transform-origin: bottom;
     }
 
-    /* Scattered cards row positioned across the center */
+    /* Hero cards */
     .cards-row {
       position: absolute;
       left: 0;
       right: 0;
-      /* Lifted from 50%: the pill and the subline sat 68px inside the deck.
-         The hero centres its flex column, so raising the subline's margin only
-         moves it half as far and pushes the text under the fold on a 800px
-         laptop. Lifting the deck is the lever that works at every height. */
       top: 38%;
       height: 320px;
       z-index: 3;
@@ -497,10 +471,6 @@
       pointer-events: auto;
     }
 
-    /* .card-fan is positioned and carries the scroll fan-out; .card is the
-       visual frame and carries the drift. Neither writes the other's
-       properties, and because the wrapper is on the OUTSIDE the whole card
-       moves rather than the photograph sliding inside a still frame. */
     .card-fan {
       position: absolute;
     }
@@ -554,7 +524,7 @@
       filter: saturate(1) contrast(1.1);
     }
 
-    /* Scatter Coordinates (8 cards) */
+    /* Card positions */
     .card-1 { width: 130px; height: 180px; left: 4%; top: 30px; z-index: 1; }
     .card-2 { width: 160px; height: 220px; left: 12%; top: 50px; z-index: 2; }
     .card-3 { width: 200px; height: 270px; left: 22%; top: 20px; z-index: 4; }
@@ -564,12 +534,8 @@
     .card-7 { width: 175px; height: 240px; left: 70%; top: 30px; z-index: 4; }
     .card-8 { width: 130px; height: 175px; left: 84%; top: 50px; z-index: 2; }
 
-    /* Subline below cards */
+    /* Subline */
     .subline {
-      /* The mirror of the ghost's extra lift, so the hero column keeps its
-         height and its centring. The name itself cannot move up: the fixed nav
-         is 92px tall and on an 800px laptop any upward shift tucks the
-         headline underneath it. */
       margin-top: calc(190px + clamp(0px, 3.7vw, 55px));
       text-align: center;
       z-index: 4;
@@ -617,9 +583,7 @@
       letter-spacing: 0.04em;
     }
 
-    /* ==========================================================================
-       4. POSITIONING SECTION ("WHAT I DO")
-       ========================================================================== */
+    /* WHAT I DO */
     .section-spacing {
       padding: 120px 0;
       position: relative;
@@ -671,10 +635,7 @@
       line-height: 1.6;
     }
 
-    /* ==========================================================================
-       5. PROJECTS GRID
-       ========================================================================== */
-    /* Two columns: the intro pins on the left, the deck stacks on the right. */
+    /* WORK */
     .work-layout {
       display: grid;
       grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
@@ -689,17 +650,12 @@
       margin-bottom: 0;
     }
 
-    /* Stacking deck — vanilla port of ContainerScroll / CardSticky.
-       ContainerScroll = the perspective wrapper.
-       CardSticky      = position:sticky + top:(i * incrementY) + translateZ(i * incrementZ).
-       No React, no motion, no Tailwind: the effect is entirely CSS sticky. */
+    /* Stacking deck */
     .cards-stack {
       perspective: 1000px;
       display: flex;
       flex-direction: column;
       gap: 40px;
-      /* Only enough tail for the last card to reach its pinned position.
-         30vh was sized for six cards and left a hole under four. */
       padding-bottom: 8vh;
     }
     .stack-card {
@@ -775,19 +731,7 @@
       border-radius: 4px;
     }
 
-    /* ==========================================================================
-       6. CHANNELS ROW -- logo cloud
-       ========================================================================== */
-    /* Four brand marks between hairlines, after 21st.dev's logo-cloud-4. That
-       component marquees; this one does not. Four logos is roughly 400px of
-       content, so a loop would visibly repeat every couple of seconds -- and a
-       moving target is a worse link. The reference's edge gradient goes with
-       it: its job is hiding where the marquee clips, and nothing clips here. */
-    /* The only centred head on the page. Everything else here is a left-aligned
-       column of cards or text; this section is four small marks on an axis, and
-       a left-aligned head over a centred strip left the two fighting. The line
-       that used to sit in the head now sits under the strip, next to the marks
-       it is actually describing. */
+    /* CHANNELS */
     .channels-head {
       max-width: 720px;
       margin-left: auto;
@@ -815,8 +759,6 @@
       gap: clamp(34px, 7vw, 84px);
     }
     .logo-chip {
-      /* Fixed 48px touch target; flex must not shrink it away on narrow
-         screens or the tap area collapses onto the glyph. */
       flex: none;
       width: 48px;
       height: 48px;
@@ -836,9 +778,7 @@
       transform: translateY(-4px);
     }
 
-    /* ==========================================================================
-       8. CONTACT FORM
-       ========================================================================== */
+    /* CONTACT */
     .contact-box {
       background: var(--surface-1);
       border: 1px solid var(--hairline);
@@ -1003,9 +943,7 @@
       box-shadow: 0 12px 28px rgba(28, 93, 153, 0.5);
     }
 
-    /* ==========================================================================
-       9. FOOTER
-       ========================================================================== */
+    /* FOOTER */
     .site-footer {
       border-top: 1px solid var(--hairline);
       padding: 44px 0;
@@ -1020,8 +958,7 @@
       flex-wrap: wrap;
       gap: 20px;
     }
-    /* Discord-style presence line. The ring is decoration, so the reduced
-       motion block above stops it; the solid dot stays either way. */
+    /* Status line */
     .footer-status {
       display: inline-flex;
       align-items: center;
@@ -1089,9 +1026,7 @@
       color: var(--ink);
     }
 
-    /* Priority 7 (Animation), severity High: respect the OS motion setting.
-       This covers CSS transitions and smooth scrolling; the GSAP timelines are
-       guarded separately in the script below. */
+    /* REDUCED MOTION */
     @media (prefers-reduced-motion: reduce) {
       *,
       *::before,
@@ -1103,22 +1038,14 @@
       html {
         scroll-behavior: auto;
       }
-      /* The hero name's masked start state is CSS, not gsap.set(): without
-         this it stays parked below its own overflow:hidden mask and the
-         name never appears at all. */
       .small-team .word > span {
         transform: none;
       }
     }
 
-    /* Section rhythm. The big gap under #work exists only so the pinned
-       intro can leave before the next heading arrives; on mobile nothing
-       pins, so it is dead space and gets cut right back. */
+    /* SECTION SPACING */
     #work {
       padding-top: 40px;
-      /* Was 220 -- a section boundary's run-up. The channels block has to sit
-         evenly between the work and the contact form, and this is the side
-         that was too generous: 212px above against 158px below. */
       padding-bottom: 56px;
     }
     #channels {
@@ -1130,20 +1057,12 @@
       padding-bottom: 140px;
     }
 
-    /* The cards carry `transition: transform .4s` for their hover lift, and
-       GSAP animates `transform` on those same elements for the entrance. Both
-       then own one property: GSAP writes a value every frame and the browser
-       eases towards it, so the card lags ~400ms behind its own tween. Opacity
-       is not transitioned, so it arrives on time and the card sits at full
-       strength while still 40px low -- which is what the staircase was.
-       This kills the transition for as long as GSAP is driving the element.
-       !important because it must beat every card's own transition regardless
-       of where that rule sits in the sheet. */
+    /* GSAP entrance guard */
     .is-entering {
       transition: none !important;
     }
 
-    /* Responsive */
+    /* RESPONSIVE */
     @media (max-width: 1024px) {
       .positioning-grid {
         grid-template-columns: repeat(2, 1fr);
@@ -1165,9 +1084,6 @@
       .nav {
         padding: 16px 20px;
       }
-      /* Wordmark plus CTA plus hamburger needs 328px of a 335px line: it wraps
-         on anything narrower than an iPhone and doubles the header height.
-         The drawer already carries an "Email me", so nothing is lost. */
       .nav-actions .nav-cta {
         display: none;
       }
@@ -1181,8 +1097,6 @@
       #contact {
         padding-bottom: 96px;
       }
-      /* The drawer is the entire mobile navigation and its links were 21px
-         tall. Everything a thumb has to hit gets at least 44. */
       .drawer-links a {
         display: block;
         padding: 12px 0;
@@ -1204,9 +1118,6 @@
         margin-right: -10px;
       }
 
-      /* Footer: three loose left-aligned blobs became a proper block. Links
-         first in two columns with real tap targets, then a rule, then the
-         identity. */
       .footer-inner {
         gap: 0;
       }
@@ -1254,9 +1165,6 @@
       }
       .cards-row {
         height: 220px;
-        /* The hero centres its flex column, so raising the subline's margin
-           only moves it half as far. Lifting the deck is the direct lever:
-           at 52% the pill and the subline sat 135px inside the cards. */
         top: 38%;
       }
       .card-1 { width: 80px; height: 110px; left: 0%; top: 20px; }
@@ -1268,9 +1176,6 @@
       .card-7 { width: 100px; height: 140px; left: auto; right: 14%; top: 20px; }
       .card-8 { width: 80px; height: 110px; left: auto; right: 1%; top: 35px; }
 
-      /* The desktop ghost lift is undone here. At this width the deck starts
-         below the ghost word, so nothing is hidden and the lift would only
-         push "builds" above the name -- a different composition, not a fix. */
       .big-results-wrap {
         margin-top: -24px;
       }
@@ -1283,8 +1188,6 @@
       }
       .cards-stack {
         gap: 24px;
-        /* Nothing pins on mobile, so the deck needs no tail. 20vh here was
-           340px of nothing between the last card and the next heading. */
         padding-bottom: 4vh;
       }
       .stack-card {
@@ -1335,7 +1238,7 @@
     </div>
   </nav>
 
-  <!-- Mobile Drawer -->
+  <!-- MOBILE DRAWER -->
   <div class="mobile-drawer" id="mobileDrawer">
     <div class="drawer-panel">
       <div class="drawer-head">
@@ -1361,9 +1264,7 @@
     </div>
   </div>
 
-  <!-- ==========================================================================
-       HERO (EXACT REFERENCE MECHANICS + DARK DESIGN SYSTEM)
-       ========================================================================== -->
+  <!-- HERO -->
   <section class="hero" id="hero">
     <h1 class="small-team" id="smallTeam">
       <span class="word"><span>Sjoerd</span></span>&nbsp;<span class="word"><span>Gourley.</span></span>
@@ -1375,9 +1276,7 @@
       </div>
     </div>
 
-    <!-- Scattered cards row across center -->
     <div class="cards-row" id="cardsRow">
-      <!-- 8 project cards with data-rot and data-depth from reference -->
       <div class="card-fan card-1">
         <div class="card" data-rot="-9" data-depth="14"><img src="assets/hero/occupancy.jpg" width="600" height="800" alt="" /></div>
       </div>
@@ -1404,7 +1303,6 @@
       </div>
     </div>
 
-    <!-- Subline -->
     <div class="subline" id="subline">
       <a href="#work" class="arrow-pill">
         See the work
@@ -1419,9 +1317,7 @@
     </div>
   </section>
 
-  <!-- ==========================================================================
-       POSITIONING ("WHAT I DO")
-       ========================================================================== -->
+  <!-- WHAT I DO -->
   <section class="section-spacing" id="about">
     <div class="container">
       <div class="section-head">
@@ -1431,7 +1327,6 @@
       </div>
 
       <div class="positioning-grid">
-        <!-- Card 1 -->
         <div class="position-card">
           <div class="pos-icon-wrap">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1444,7 +1339,6 @@
           <p>Accounts, subscriptions, access that drifts out of sync with payment, payouts to two sides at once. The design tutorials end right before this, and this is where the money and the trust actually live.</p>
         </div>
 
-        <!-- Card 2 -->
         <div class="position-card">
           <div class="pos-icon-wrap">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1464,7 +1358,6 @@
           <p>A live marketplace and channel manager for B&amp;B and small hotel owners in the Netherlands, launching in Limburg. Listings, availability sync with the platforms hosts already use, and payments. Live, taking bookings, with the first host on it.</p>
         </div>
 
-        <!-- Card 3 -->
         <div class="position-card">
           <div class="pos-icon-wrap">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1479,9 +1372,7 @@
     </div>
   </section>
 
-  <!-- ==========================================================================
-       PROJECTS GRID
-       ========================================================================== -->
+  <!-- WORK -->
   <section class="section-spacing" id="work">
     <div class="container">
       <div class="work-layout">
@@ -1494,7 +1385,6 @@
         </div>
 
         <div class="cards-stack">
-          <!-- Project 1 -->
           <div class="stack-card" style="--i:0">
             <div class="project-card">
               <div class="project-media">
@@ -1514,7 +1404,6 @@
             </div>
           </div>
 
-          <!-- Project 2 -->
           <div class="stack-card" style="--i:1">
             <div class="project-card">
               <div class="project-media">
@@ -1534,7 +1423,6 @@
             </div>
           </div>
 
-          <!-- Project 3 -->
           <div class="stack-card" style="--i:2">
             <div class="project-card">
               <div class="project-media">
@@ -1554,7 +1442,6 @@
             </div>
           </div>
 
-          <!-- Project 4 -->
           <div class="stack-card" style="--i:3">
             <div class="project-card">
               <div class="project-media">
@@ -1578,9 +1465,7 @@
     </div>
   </section>
 
-  <!-- ==========================================================================
-       CHANNELS / SOCIALS
-       ========================================================================== -->
+  <!-- CHANNELS -->
   <section class="section-spacing" id="channels">
     <div class="container">
       <div class="section-head channels-head">
@@ -1607,9 +1492,7 @@
     </div>
   </section>
 
-  <!-- ==========================================================================
-       CONTACT FORM
-       ========================================================================== -->
+  <!-- CONTACT -->
   <section class="section-spacing" id="contact">
     <div class="container">
       <div class="contact-box">
@@ -1626,8 +1509,6 @@
         </div>
 
         <form class="contact-form" id="contactForm" method="post" action="/api/contact">
-          <!-- Honeypot. Off-screen rather than display:none, which some bots
-               skip. A human never focuses it; anything in it is a bot. -->
           <div class="hp" aria-hidden="true">
             <label for="cCompany">Company</label>
             <input type="text" id="cCompany" name="company" tabindex="-1" autocomplete="off" />
@@ -1674,8 +1555,6 @@
       <div class="footer-copy">
         <span>&copy; <span id="year">2026</span> Sjoerd Gourley</span>
         <span class="footer-sep" aria-hidden="true">&middot;</span>
-        <!-- EDIT ME: this is the whole status line. Keep it true; unlike
-             Discord's, nothing updates it for you. -->
         <span class="footer-status">
           <span class="status-dot" aria-hidden="true"></span>
           <span>Currently building <strong>Fidestay</strong></span>
@@ -1690,7 +1569,7 @@
     </div>
   </footer>
 
-  <!-- GSAP & ScrollTrigger from CDN -->
+  <!-- GSAP -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 
@@ -1698,19 +1577,13 @@
     (function () {
       gsap.registerPlugin(ScrollTrigger);
 
-      // Skipping the motion block leaves the page in its finished state,
-      // because almost every hidden start state comes from a gsap.set() below.
-      // The one exception is the hero name's masked word, which starts
-      // translated in CSS -- the reduced-motion media query resets it.
       var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-      // Set copyright year
+      // COPYRIGHT YEAR
       var yrEl = document.getElementById("year");
       if (yrEl) yrEl.textContent = new Date().getFullYear();
 
-      // ============================================================
-      // NAV SCROLL HAIRLINE
-      // ============================================================
+      // NAV SCROLL
       var nav = document.getElementById("nav");
       window.addEventListener("scroll", function () {
         if (window.scrollY > 40) {
@@ -1720,14 +1593,12 @@
         }
       });
 
-      // Mobile drawer handlers
+      // MOBILE DRAWER
       var hamburger = document.getElementById("hamburgerBtn");
       var drawer = document.getElementById("mobileDrawer");
       var drawerClose = document.getElementById("drawerClose");
 
       if (hamburger && drawer) {
-        // One writer for the drawer state, so aria-expanded can never drift
-        // out of sync with the visual state.
         var setDrawer = function (open) {
           drawer.classList.toggle("open", open);
           hamburger.setAttribute("aria-expanded", open ? "true" : "false");
@@ -1755,273 +1626,243 @@
         });
       }
 
-      // ScrollTrigger measures on init, but the fonts and the eight hero
-      // images land later and shift the layout. Without a re-measure its
-      // progress is computed against stale geometry, which is why a refresh
-      // halfway down leaves the deck frozen at the top.
+      // RE-MEASURE AFTER LOAD
       window.addEventListener("load", function () { ScrollTrigger.refresh(); });
       if (document.fonts && document.fonts.ready) {
         document.fonts.ready.then(function () { ScrollTrigger.refresh(); });
       }
 
       if (!reduceMotion) {
-      // ============================================================
-      // INITIAL STATES + APPLY DATA-ROT FROM REFERENCE
-      // ============================================================
-      gsap.set("#nav", { opacity: 0, y: -20 });
-      gsap.set(".small-team .word > span", { y: "105%" });
-      gsap.set(".big-results .letter", { y: 80, opacity: 0 });
-      gsap.set("#subline", { opacity: 0, y: 20 });
+        // INITIAL STATES
+        gsap.set("#nav", { opacity: 0, y: -20 });
+        gsap.set(".small-team .word > span", { y: "105%" });
+        gsap.set(".big-results .letter", { y: 80, opacity: 0 });
+        gsap.set("#subline", { opacity: 0, y: 20 });
 
-      // Apply each card's natural rotation as rest-state, starting offscreen above
-      document.querySelectorAll(".card").forEach(function (card) {
-        var rot = parseFloat(card.dataset.rot) || 0;
-        card.dataset.restRot = rot;
-        gsap.set(card, { y: -800, rotation: rot + 25, opacity: 0, scale: 0.7 });
-      });
-
-      // ============================================================
-      // INTRO TIMELINE (EXACT REFERENCE BEHAVIOR)
-      // ============================================================
-      var intro = gsap.timeline({ defaults: { ease: "power3.out" } });
-      intro
-        .to("#nav", { opacity: 1, y: 0, duration: 0.8 }, 0.1)
-        .to(
-          ".small-team .word > span",
-          {
-            y: "0%",
-            duration: 0.9,
-            stagger: 0.08,
-            ease: "power3.out"
-          },
-          0.3
-        )
-        .to(
-          ".big-results .letter",
-          {
-            y: 0,
-            opacity: 1,
-            duration: 0.9,
-            stagger: 0.05,
-            ease: "back.out(1.6)"
-          },
-          0.55
-        )
-        .to(
-          ".card",
-          {
-            y: 0,
-            opacity: 1,
-            scale: 1,
-            rotation: function (i, el) { return parseFloat(el.dataset.restRot) || 0; },
-            duration: 1.1,
-            stagger: { each: 0.08, from: "center" },
-            ease: "back.out(1.4)"
-          },
-          0.8
-        )
-        .to("#subline", { opacity: 1, y: 0, duration: 0.8 }, 1.6);
-
-      // ============================================================
-      // CONTINUOUS FLOAT ON CARDS (SINE WAVE YOYO)
-      // ============================================================
-      document.querySelectorAll(".card").forEach(function (card, i) {
-        var rot = parseFloat(card.dataset.restRot) || 0;
-        gsap.to(card, {
-          y: "+=" + (8 + (i % 3) * 5),
-          rotation: rot + (i % 2 === 0 ? 1.5 : -1.5),
-          duration: 3 + (i % 4) * 0.5,
-          delay: 1.8 + i * 0.1,
-          ease: "sine.inOut",
-          yoyo: true,
-          repeat: -1
-        });
-      });
-
-      // ============================================================
-      // MOUSE PARALLAX ON CARDS (DESKTOP ONLY, HALVED ON Y)
-      // ============================================================
-      var hero = document.querySelector(".hero");
-      var mx = 0, my = 0, tx = 0, ty = 0;
-      var isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
-
-      if (hero && !isTouch) {
-        hero.addEventListener("mousemove", function (e) {
-          var r = hero.getBoundingClientRect();
-          mx = ((e.clientX - r.left) / r.width - 0.5) * 2;
-          my = ((e.clientY - r.top) / r.height - 0.5) * 2;
-        });
-        hero.addEventListener("mouseleave", function () {
-          mx = 0;
-          my = 0;
+        document.querySelectorAll(".card").forEach(function (card) {
+          var rot = parseFloat(card.dataset.rot) || 0;
+          card.dataset.restRot = rot;
+          gsap.set(card, { y: -800, rotation: rot + 25, opacity: 0, scale: 0.7 });
         });
 
-        function parallax() {
-          tx += (mx - tx) * 0.05;
-          ty += (my - ty) * 0.05;
-          document.querySelectorAll(".card").forEach(function (card) {
-            var d = parseFloat(card.dataset.depth) || 8;
-            card.style.translate = (tx * d) + "px " + (ty * d * 0.5) + "px";
-          });
-          requestAnimationFrame(parallax);
-        }
-        parallax();
-      }
-
-      // ============================================================
-      // CARD HOVER 3D LIFT WITH ELASTIC RELEASE
-      // ============================================================
-      document.querySelectorAll(".card").forEach(function (card) {
-        card.addEventListener("mousemove", function (e) {
-          var r = card.getBoundingClientRect();
-          var px = (e.clientX - r.left) / r.width - 0.5;
-          var py = (e.clientY - r.top) / r.height - 0.5;
-          card.parentElement.style.zIndex = "20";
-          gsap.to(card, {
-            rotateX: -py * 16,
-            rotateY: px * 16,
-            scale: 1.12,
-            duration: 0.4,
-            ease: "power2.out",
-            transformPerspective: 700,
-            overwrite: "auto"
-          });
-        });
-        card.addEventListener("mouseleave", function () {
-          card.parentElement.style.zIndex = "";
-          gsap.to(card, {
-            rotateX: 0,
-            rotateY: 0,
-            scale: 1,
-            duration: 0.8,
-            ease: "elastic.out(1, 0.6)",
-            overwrite: "auto"
-          });
-        });
-        card.addEventListener("click", function () {
-          gsap.fromTo(
-            card,
-            { scale: 1.15 },
+        // INTRO TIMELINE
+        var intro = gsap.timeline({ defaults: { ease: "power3.out" } });
+        intro
+          .to("#nav", { opacity: 1, y: 0, duration: 0.8 }, 0.1)
+          .to(
+            ".small-team .word > span",
             {
-              scale: 1.05,
-              duration: 0.15,
-              yoyo: true,
-              repeat: 1,
-              ease: "power2.inOut"
-            }
-          );
-        });
-      });
+              y: "0%",
+              duration: 0.9,
+              stagger: 0.08,
+              ease: "power3.out"
+            },
+            0.3
+          )
+          .to(
+            ".big-results .letter",
+            {
+              y: 0,
+              opacity: 1,
+              duration: 0.9,
+              stagger: 0.05,
+              ease: "back.out(1.6)"
+            },
+            0.55
+          )
+          .to(
+            ".card",
+            {
+              y: 0,
+              opacity: 1,
+              scale: 1,
+              rotation: function (i, el) { return parseFloat(el.dataset.restRot) || 0; },
+              duration: 1.1,
+              stagger: { each: 0.08, from: "center" },
+              ease: "back.out(1.4)"
+            },
+            0.8
+          )
+          .to("#subline", { opacity: 1, y: 0, duration: 0.8 }, 1.6);
 
-      // ============================================================
-      // SCROLL: CARDS FAN OUT, GHOST WORD SCALES UP (EXACT MOVES ARRAY)
-      // ============================================================
-      ScrollTrigger.create({
-        trigger: ".hero",
-        start: "top top",
-        end: "bottom top",
-        scrub: 0.8,
-        onUpdate: function (self) {
-          var p = self.progress;
-          // No sideways fan on narrow screens: 260px of travel does not fit in
-          // a 375px viewport and is what made the page scroll horizontally.
-          var fanOut = window.innerWidth >= 768;
-          // Ghost word scales up
-          gsap.set(".big-results", { scale: 1 + 0.15 * p, opacity: 1 - 0.4 * p });
-          // Headline rises out
-          gsap.set(".small-team", { y: -60 * p, opacity: 1 - p * 1.5 });
-          // Cards fan out using exact reference moves array
-          var moves = [
-            { x: -260, y: -40, rot: -25 }, // 1
-            { x: -200, y: 20, rot: -18 },  // 2
-            { x: -120, y: 80, rot: -10 },  // 3
-            { x: -40, y: 120, rot: -4 },   // 4
-            { x: 40, y: 120, rot: 4 },     // 5
-            { x: 120, y: 80, rot: 12 },    // 6
-            { x: 200, y: 20, rot: 22 },    // 7
-            { x: 260, y: -40, rot: 28 }    // 8
-          ];
-          document.querySelectorAll(".card").forEach(function (card, i) {
-            var m = moves[i] || { x: 0, y: 0, rot: 0 };
-            var rest = parseFloat(card.dataset.restRot) || 0;
-            gsap.set(card.parentElement, {
-              x: fanOut ? m.x * p : 0,
-              y: m.y * p,
-              rotation: rest + m.rot * p
+        // CARD FLOAT
+        document.querySelectorAll(".card").forEach(function (card, i) {
+          var rot = parseFloat(card.dataset.restRot) || 0;
+          gsap.to(card, {
+            y: "+=" + (8 + (i % 3) * 5),
+            rotation: rot + (i % 2 === 0 ? 1.5 : -1.5),
+            duration: 3 + (i % 4) * 0.5,
+            delay: 1.8 + i * 0.1,
+            ease: "sine.inOut",
+            yoyo: true,
+            repeat: -1
+          });
+        });
+
+        // MOUSE PARALLAX
+        var hero = document.querySelector(".hero");
+        var mx = 0, my = 0, tx = 0, ty = 0;
+        var isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+
+        if (hero && !isTouch) {
+          hero.addEventListener("mousemove", function (e) {
+            var r = hero.getBoundingClientRect();
+            mx = ((e.clientX - r.left) / r.width - 0.5) * 2;
+            my = ((e.clientY - r.top) / r.height - 0.5) * 2;
+          });
+          hero.addEventListener("mouseleave", function () {
+            mx = 0;
+            my = 0;
+          });
+
+          function parallax() {
+            tx += (mx - tx) * 0.05;
+            ty += (my - ty) * 0.05;
+            document.querySelectorAll(".card").forEach(function (card) {
+              var d = parseFloat(card.dataset.depth) || 8;
+              card.style.translate = (tx * d) + "px " + (ty * d * 0.5) + "px";
+            });
+            requestAnimationFrame(parallax);
+          }
+          parallax();
+        }
+
+        // CARD HOVER
+        document.querySelectorAll(".card").forEach(function (card) {
+          card.addEventListener("mousemove", function (e) {
+            var r = card.getBoundingClientRect();
+            var px = (e.clientX - r.left) / r.width - 0.5;
+            var py = (e.clientY - r.top) / r.height - 0.5;
+            card.parentElement.style.zIndex = "20";
+            gsap.to(card, {
+              rotateX: -py * 16,
+              rotateY: px * 16,
+              scale: 1.12,
+              duration: 0.4,
+              ease: "power2.out",
+              transformPerspective: 700,
+              overwrite: "auto"
             });
           });
-          gsap.set("#subline", { opacity: 1 - p * 2 });
-        }
-      });
-
-      // ============================================================
-      // SECTION REVEALS ON SCROLL
-      // ============================================================
-      gsap.utils.toArray(".section-head").forEach(function (head) {
-        gsap.from(head, {
-          opacity: 0,
-          y: 30,
-          duration: 0.8,
-          ease: "power3.out",
-          scrollTrigger: { trigger: head, start: "top 85%" }
+          card.addEventListener("mouseleave", function () {
+            card.parentElement.style.zIndex = "";
+            gsap.to(card, {
+              rotateX: 0,
+              rotateY: 0,
+              scale: 1,
+              duration: 0.8,
+              ease: "elastic.out(1, 0.6)",
+              overwrite: "auto"
+            });
+          });
+          card.addEventListener("click", function () {
+            gsap.fromTo(
+              card,
+              { scale: 1.15 },
+              {
+                scale: 1.05,
+                duration: 0.15,
+                yoyo: true,
+                repeat: 1,
+                ease: "power2.inOut"
+              }
+            );
+          });
         });
-      });
 
-      // Cards hover-lift with a CSS transition on `transform` and enter with a
-      // GSAP tween on the same property. Hand the property to GSAP for the
-      // duration of the tween and give it back afterwards, so the two never
-      // ease the same transform at once. See `.is-entering` in the stylesheet.
-      function enterCards(selector, vars) {
-        var els = gsap.utils.toArray(selector);
-        if (!els.length) return;
-        els.forEach(function (el) { el.classList.add("is-entering"); });
-        vars.onComplete = function () {
-          els.forEach(function (el) { el.classList.remove("is-entering"); });
-        };
-        gsap.from(els, vars);
+        // SCROLL FAN-OUT
+        ScrollTrigger.create({
+          trigger: ".hero",
+          start: "top top",
+          end: "bottom top",
+          scrub: 0.8,
+          onUpdate: function (self) {
+            var p = self.progress;
+            var fanOut = window.innerWidth >= 768;
+            gsap.set(".big-results", { scale: 1 + 0.15 * p, opacity: 1 - 0.4 * p });
+            gsap.set(".small-team", { y: -60 * p, opacity: 1 - p * 1.5 });
+            var moves = [
+              { x: -260, y: -40, rot: -25 },
+              { x: -200, y: 20, rot: -18 },
+              { x: -120, y: 80, rot: -10 },
+              { x: -40, y: 120, rot: -4 },
+              { x: 40, y: 120, rot: 4 },
+              { x: 120, y: 80, rot: 12 },
+              { x: 200, y: 20, rot: 22 },
+              { x: 260, y: -40, rot: 28 }
+            ];
+            document.querySelectorAll(".card").forEach(function (card, i) {
+              var m = moves[i] || { x: 0, y: 0, rot: 0 };
+              var rest = parseFloat(card.dataset.restRot) || 0;
+              gsap.set(card.parentElement, {
+                x: fanOut ? m.x * p : 0,
+                y: m.y * p,
+                rotation: rest + m.rot * p
+              });
+            });
+            gsap.set("#subline", { opacity: 1 - p * 2 });
+          }
+        });
+
+        // SECTION REVEALS
+        gsap.utils.toArray(".section-head").forEach(function (head) {
+          gsap.from(head, {
+            opacity: 0,
+            y: 30,
+            duration: 0.8,
+            ease: "power3.out",
+            scrollTrigger: { trigger: head, start: "top 85%" }
+          });
+        });
+
+        // Entrance tween that pauses the element's CSS transition
+        function enterCards(selector, vars) {
+          var els = gsap.utils.toArray(selector);
+          if (!els.length) return;
+          els.forEach(function (el) { el.classList.add("is-entering"); });
+          vars.onComplete = function () {
+            els.forEach(function (el) { el.classList.remove("is-entering"); });
+          };
+          gsap.from(els, vars);
+        }
+
+        enterCards(".position-card", {
+          opacity: 0,
+          y: 40,
+          duration: 0.8,
+          stagger: 0.1,
+          ease: "power3.out",
+          scrollTrigger: { trigger: ".positioning-grid", start: "top 80%" }
+        });
+
+        enterCards(".project-card", {
+          opacity: 0,
+          y: 40,
+          duration: 0.8,
+          stagger: 0.08,
+          ease: "power3.out",
+          scrollTrigger: { trigger: ".cards-stack", start: "top 85%" }
+        });
+
+        enterCards(".logo-cloud-note, .logo-chip", {
+          opacity: 0,
+          y: 18,
+          duration: 0.6,
+          stagger: 0.07,
+          ease: "power3.out",
+          scrollTrigger: { trigger: ".logo-cloud", start: "top 88%" }
+        });
+
+        gsap.from(".contact-box", {
+          opacity: 0,
+          y: 40,
+          duration: 0.9,
+          ease: "power3.out",
+          scrollTrigger: { trigger: ".contact-box", start: "top 85%" }
+        });
       }
 
-      enterCards(".position-card", {
-        opacity: 0,
-        y: 40,
-        duration: 0.8,
-        stagger: 0.1,
-        ease: "power3.out",
-        scrollTrigger: { trigger: ".positioning-grid", start: "top 80%" }
-      });
-
-      enterCards(".project-card", {
-        opacity: 0,
-        y: 40,
-        duration: 0.8,
-        stagger: 0.08,
-        ease: "power3.out",
-        scrollTrigger: { trigger: ".cards-stack", start: "top 85%" }
-      });
-
-      enterCards(".logo-cloud-note, .logo-chip", {
-        opacity: 0,
-        y: 18,
-        duration: 0.6,
-        stagger: 0.07,
-        ease: "power3.out",
-        scrollTrigger: { trigger: ".logo-cloud", start: "top 88%" }
-      });
-
-      gsap.from(".contact-box", {
-        opacity: 0,
-        y: 40,
-        duration: 0.9,
-        ease: "power3.out",
-        scrollTrigger: { trigger: ".contact-box", start: "top 85%" }
-      });
-      } // end if (!reduceMotion)
-
-      // ============================================================
       // CONTACT FORM
-      // ============================================================
-      // The form used to fire alert("Message sent") and throw the message
-      // away. It now either really posts, or says plainly that it cannot.
       var form = document.getElementById("contactForm");
       var status = document.getElementById("formStatus");
       if (form && status) {
@@ -2062,8 +1903,6 @@
             .then(function (data) {
               form.reset();
               if (tsField) tsField.value = String(Date.now());
-              // Stored counts as received even if the notification mail
-              // failed, so the confirmation is the same either way.
               say("Got it. I'll answer.");
             })
             .catch(function () {
@@ -2075,9 +1914,7 @@
         });
       }
 
-      // ============================================================
-      // BUTTON PRESS SPRING
-      // ============================================================
+      // BUTTON PRESS
       document.querySelectorAll(".nav-cta, .arrow-pill, .btn-submit").forEach(function (btn) {
         btn.addEventListener("click", function () {
           if (reduceMotion) return;
@@ -2095,7 +1932,7 @@
         });
       });
 
-      // Ghost word hover: subtle letter rise
+      // GHOST WORD HOVER
       var bigWrap = document.getElementById("bigResultsWrap");
       if (bigWrap) {
         bigWrap.addEventListener("mouseenter", function () {
