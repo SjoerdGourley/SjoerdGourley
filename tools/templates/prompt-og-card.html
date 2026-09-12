@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8" />
+<meta name="robots" content="noindex, nofollow" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700;800;900&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --canvas:#222222; --hairline:#464646; --ink:#ffffff;
+    --ink-muted:#d0d0d0; --ink-subtle:#8a8a8a;
+    --accent-fill:#1c5d99; --accent-text:#639fab;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{width:1200px;height:630px;overflow:hidden}
+  body{background:var(--canvas);font-family:'Inter',system-ui,sans-serif;color:var(--ink);position:relative}
+  .glow{
+    position:absolute;width:900px;height:900px;border-radius:50%;
+    background:radial-gradient(circle, rgba(28,93,153,.28) 0%, rgba(28,93,153,0) 62%);
+    top:-380px;right:-240px;
+  }
+  .wrap{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:0 84px}
+  .eyebrow{
+    display:flex;align-items:center;gap:12px;
+    font-family:'JetBrains Mono',monospace;font-size:17px;letter-spacing:.22em;
+    text-transform:uppercase;color:var(--accent-text);margin-bottom:30px;
+  }
+  .eyebrow::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--accent-fill);box-shadow:0 0 12px var(--accent-text)}
+  h1{font-size:76px;font-weight:800;letter-spacing:-.035em;line-height:1.02;margin-bottom:26px;max-width:15ch}
+  h1 em{font-style:italic;color:var(--accent-text)}
+  .rule{width:88px;height:3px;background:var(--accent-fill);border-radius:2px;margin-bottom:26px}
+  .line{font-size:26px;line-height:1.4;color:var(--ink-muted);font-weight:500;max-width:44ch}
+  .domain{
+    position:absolute;left:84px;bottom:46px;
+    font-family:'JetBrains Mono',monospace;font-size:19px;color:var(--ink-subtle);letter-spacing:.02em;
+  }
+</style></head>
+<body>
+  <div class="glow"></div>
+  <div class="wrap">
+    <div class="eyebrow">Free prompt</div>
+    <h1>{{HEADLINE}}</h1>
+    <div class="rule"></div>
+    <div class="line">{{SUBTITLE}}</div>
+  </div>
+  <div class="domain">sjoerdgourley.com/p/{{SLUG}}</div>
+</body></html>

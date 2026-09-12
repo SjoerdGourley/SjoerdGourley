@@ -3,23 +3,34 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>The multi-tenant prompt | Sjoerd Gourley</title>
+  <title>{{PAGE_TITLE}} | Sjoerd Gourley</title>
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="icon" href="/favicon.ico" sizes="32x32" />
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-  <meta name="description" content="The prompt that writes the multi-tenant core from the video, plus the ten-point checklist I use to decide whether its output is safe to ship." />
+  <meta name="description" content="{{DESCRIPTION}}" />
 
-  <link rel="canonical" href="https://sjoerdgourley.com/p/multitenant/" />
+  <link rel="canonical" href="https://sjoerdgourley.com/p/{{SLUG}}/" />
   <meta name="theme-color" content="#222222" />
 
   <!-- OPEN GRAPH -->
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Sjoerd Gourley" />
   <meta property="og:locale" content="en_US" />
-  <meta property="og:url" content="https://sjoerdgourley.com/p/multitenant/" />
-  <meta property="og:title" content="The multi-tenant prompt" />
-  <meta property="og:description" content="The prompt that writes the multi-tenant core, plus the ten-point checklist I use to decide whether its output is safe to ship." />
-  <meta property="og:image" content="https://sjoerdgourley.com/assets/og-image.jpg" />
+  <meta property="og:url" content="https://sjoerdgourley.com/p/{{SLUG}}/" />
+  <meta property="og:title" content="{{PAGE_TITLE}}" />
+  <meta property="og:description" content="{{DESCRIPTION}}" />
+  <meta property="og:image" content="https://sjoerdgourley.com/assets/og/{{SLUG}}.jpg" />
+  <meta property="og:image:type" content="image/jpeg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="{{PAGE_TITLE}}" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@sjoerdgourley" />
+  <meta name="twitter:creator" content="@sjoerdgourley" />
+  <meta name="twitter:title" content="{{PAGE_TITLE}}" />
+  <meta name="twitter:description" content="{{DESCRIPTION}}" />
+  <meta name="twitter:image" content="https://sjoerdgourley.com/assets/og/{{SLUG}}.jpg" />
 
   <!-- FONTS -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -28,7 +39,7 @@
 
   <link rel="stylesheet" href="/style.css" />
 </head>
-<body class="prompt-page" data-slug="multitenant">
+<body class="prompt-page" data-slug="{{SLUG}}">
 
   <!-- NAV -->
   <header class="prompt-nav">
@@ -42,8 +53,8 @@
   <main class="prompt-shell">
     <section class="prompt-card">
       <div class="eyebrow">From the video</div>
-      <h1>The prompt behind the <em>multi-tenant core</em>.</h1>
-      <p class="prompt-lead">One system, a hundred agencies, and no way for one to read another's data. This is the prompt I used to write that layer, and the ten checks I run on what comes back.</p>
+      <h1>{{HEADLINE}}</h1>
+      <p class="prompt-lead">{{LEAD}}</p>
 
       <form class="prompt-form" id="promptForm" method="post" action="/api/prompt-signup">
         <div class="hp" aria-hidden="true">
@@ -51,7 +62,7 @@
           <input type="text" id="pCompany" name="company" tabindex="-1" autocomplete="off" />
         </div>
         <input type="hidden" name="ts" id="pTs" value="" />
-        <input type="hidden" name="slug" value="multitenant" />
+        <input type="hidden" name="slug" value="{{SLUG}}" />
         <div class="prompt-field">
           <label for="pEmail">Your email</label>
           <input type="email" id="pEmail" name="email" class="form-input" placeholder="you@studio.com" required />
@@ -67,18 +78,17 @@
       </form>
 
       <p class="prompt-fineprint">You get one email to confirm, then the prompt. Nothing else unless you ask for it, and you can reply to any of it.</p>
+      {{VIDEO_BLOCK}}
     </section>
 
     <section class="prompt-aside">
       <h2>What lands in your inbox</h2>
       <ul class="prompt-list">
-        <li><strong>The prompt</strong>, as I ran it: tenancy model, row level security, roles, usage metering, and the tests it has to produce.</li>
-        <li><strong>Ten checks on the output</strong>, because the model writes policies that look right and leak. Every check names the failure it catches.</li>
+{{INBOX_ITEMS}}
       </ul>
       <h2>What stays in the community</h2>
       <ul class="prompt-list">
-        <li>The working repository from the video, and the reasoning behind each decision.</li>
-        <li>Help when it does not work on your stack.</li>
+{{COMMUNITY_ITEMS}}
       </ul>
     </section>
   </main>
