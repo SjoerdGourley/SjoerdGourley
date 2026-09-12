@@ -533,7 +533,7 @@
         gsap.set("#nav", { opacity: 0, y: -20 });
         gsap.set(".small-team .word > span", { y: "105%" });
         gsap.set(".big-results .letter", { y: 80, opacity: 0 });
-        gsap.set("#subline", { opacity: 0, y: 20 });
+        gsap.set("#subline", { y: 20 });
 
         document.querySelectorAll(".card").forEach(function (card) {
           var rot = parseFloat(card.dataset.rot) || 0;
@@ -579,7 +579,7 @@
             },
             0.8
           )
-          .to("#subline", { opacity: 1, y: 0, duration: 0.8 }, 1.6);
+          .to("#subline", { y: 0, duration: 0.8 }, 1.6);
 
         // CARD FLOAT
         document.querySelectorAll(".card").forEach(function (card, i) {
