@@ -1,6 +1,6 @@
 // POST /api/contact: store in Supabase, then mail via Resend
 
-const SUPABASE_URL = 'https://ezadbsekqvfzribcchek.supabase.co';
+const SUPABASE_URL = process.env.SUPABASE_URL || 'https://zjsgmaymgffdyijosvvf.supabase.co';
 const TO = 'hello@sjoerdgourley.com';
 const FROM = 'sjoerdgourley.com <noreply@sjoerdgourley.com>';
 const FROM_REPLY = 'Sjoerd Gourley <hello@sjoerdgourley.com>';

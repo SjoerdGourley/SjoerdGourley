@@ -1,7 +1,10 @@
 // Helpers shared by the prompt-page endpoints. The leading underscore keeps
 // Vercel from routing this file.
 
-const SUPABASE_URL = 'https://ezadbsekqvfzribcchek.supabase.co';
+// SjoerdGourley-tabellen leven na 2026-09-25 in het famawell Supabase-project
+// (sjoerdgourley-project stond gepauzeerd na de FideStay-migratie). Env-var
+// override zodat een verplaatsing niet nog een deploy kost.
+const SUPABASE_URL = process.env.SUPABASE_URL || 'https://zjsgmaymgffdyijosvvf.supabase.co';
 const SITE = 'https://sjoerdgourley.com';
 const FROM = 'Sjoerd Gourley <hello@sjoerdgourley.com>';
 const REPLY_TO = 'hello@sjoerdgourley.com';
